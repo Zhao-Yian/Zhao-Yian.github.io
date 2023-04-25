@@ -7,7 +7,7 @@
 al 
 # Site Settings
 locale                   : "en-CN"
-title                    : "Yian Zhao's Personal Homepage"
+title                    : "Yian Zhao/Personal Homepage"
 title_separator          : "-"
 name                     : &name "Yian Zhao"
 description              : &description ""
@@ -82,11 +82,11 @@ analytics:
 author:
   name             : "Yian Zhao"
   avatar           : "profile_1.png"
-  bio              : "A pre-graduate student interested in object detection, image segmentation, multimodel"
-  location         : "Beijing China"
+  bio              : "A pre-graduate student at Peking University Shenzhen Graduate School"
+  location         : "China Beijing"
   employer         :
-  pubmed           : "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
-  googlescholar    : "http://yourfullgooglescholarurl.com"
+  pubmed           : # "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
+  googlescholar    : "https://scholar.google.com/citations?user=1ncPLCYAAAAJ&hl=en"
   email            :
   researchgate     :  # example: "https://www.researchgate.net/profile/yourprofile"
   uri              :
@@ -96,20 +96,20 @@ author:
   flickr           :
   facebook         :
   foursquare       :
-  github           : "academicpages"
+  github           : "https://github.com/Zhao-Yian"
   google_plus      :
   keybase          :
   instagram        :
   impactstory      : #"https://profiles.impactstory.org/u/xxxx-xxxx-xxxx-xxxx"
   lastfm           :
   linkedin         :
-  orcid            : "http://orcid.org/yourorcidurl"
+  orcid            : "https://orcid.org/my-orcid?orcid=0000-0001-7943-3164"
   pinterest        :
   soundcloud       :
   stackoverflow    : # http://stackoverflow.com/users/123456/username
   steam            :
   tumblr           :
-  twitter          : "replacethistwitterhandle"
+  twitter          : # "replacethistwitterhandle"
   vine             :
   weibo            :
   xing             :
