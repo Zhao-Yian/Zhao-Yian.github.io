@@ -4,10 +4,10 @@
 # which you are expected to set up once and rarely need to edit after that.
 # For technical reasons, this file is *NOT* reloaded automatically when you use
 # `jekyll serve`. If you change this file, please restart the server process.
-
+al 
 # Site Settings
 locale                   : "en-CN"
-title                    : "赵祎安的个人主页"
+title                    : "Yian Zhao's Personal Homepage"
 title_separator          : "-"
 name                     : &name "Yian Zhao"
 description              : &description ""
@@ -81,9 +81,9 @@ analytics:
 # Site Author
 author:
   name             : "Yian Zhao"
-  avatar           : "profile.png"
+  avatar           : "profile_1.png"
   bio              : "A pre-graduate student interested in object detection, image segmentation, multimodel"
-  location         : "Location"
+  location         : "Beijing China"
   employer         :
   pubmed           : "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
   googlescholar    : "http://yourfullgooglescholarurl.com"
