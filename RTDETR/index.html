@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="DETRs Beat YOLOs on Real-time Object Detection">
+  <meta name="keywords" content="Real-time Object Detection, DETR, YOLO">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DETRs Beat YOLOs on Real-time Object Detection</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">DETRs Beat YOLOs on Real-time Object Detection</h1>
+          <div class="is-size-3 publication-authors">
+            <span class="author-block" style="color:red">CVPR 2024</span>
+          </div>
+          <div class="is-size-4 publication-authors">
+            <span class="author-block">
+              Yian Zhao<sup>1,2<sup>&sect;</sup></sup>&nbsp;&nbsp;
+            </span>
+            <span class="author-block">
+              Wenyu Lv<sup>1<sup>&sect;</sup><sup>&spades;</sup></sup>&nbsp;&nbsp;
+            </span>
+            <span class="author-block">
+              Shangliang Xu<sup>1</sup>&nbsp;&nbsp;
+            </span>
+            <span class="author-block">
+              Jinman Wei<sup>1</sup>&nbsp;&nbsp;
+            </span>
+            <span class="author-block">
+              Guanzhong Wang<sup>1</sup>
+            </span>
+            <span class="author-block">
+              Qingqing Dang<sup>1</sup>&nbsp;&nbsp;
+            </span>
+            <span class="author-block">
+              Yi Liu<sup>1</sup>&nbsp;&nbsp;
+            </span>
+            <span class="author-block">
+              Jie Chen<sup>2,3*</sup>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Baidu, Inc</span> &nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="author-block"><sup>2</sup>School of ECE, Peking University</span> &nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="author-block"><sup>3</sup>Peng Cheng Laboratory</span>
+          </div>
+          <div class="is-size-6 publication-authors">
+            <span class="author-block"><sup>&sect;</sup> Equal contribution &nbsp;&nbsp;&nbsp;&nbsp; <sup>&spades;</sup> Project leader</span>
+          </div>
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://openaccess.thecvf.com/content/CVPR2024/papers/Zhao_DETRs_Beat_YOLOs_on_Real-time_Object_Detection_CVPR_2024_paper.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <!-- Appendix Link. -->
+              <span class="link-block">
+                <a href="https://openaccess.thecvf.com/content/CVPR2024/supplemental/Zhao_DETRs_Beat_YOLOs_CVPR_2024_supplemental.pdf"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Appendix</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+              <span class="link-block">
+                <a href="https://youtu.be/TbaLWroPYbo?si=pwfJAZuPLimRd-OG"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/lyuwenyu/RT-DETR"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Abstract</h2>
+          <div>
+            <img width="500" src="./static/images/results.jpg"
+                 class="interpolation-image"
+                 alt="Interpolate results image."/>
+          </div>
+        <div class="content has-text-justified">
+          <p>
+            The YOLO series has become the most popular framework for real-time object detection due to its reasonable trade-off between speed and accuracy.
+            However, we observe that the speed and accuracy of YOLOs are negatively affected by the NMS.
+            Recently, end-to-end Transformer-based detectors~(DETRs) have provided an alternative to eliminating NMS.
+            Nevertheless, the high computational cost limits their practicality and hinders them from fully exploiting the advantage of excluding NMS.
+          </p>
+          <p>
+            In this paper, we propose the <b>R</b>eal-<b>T</b>ime <b>DE</b>tection <b>TR</b>ansformer (<b>RT-DETR</b>),
+            the first real-time end-to-end object detector to our best knowledge that addresses the above dilemma.
+            We build RT-DETR in two steps, drawing on the advanced DETR: first we focus on maintaining accuracy while improving speed, followed by maintaining speed while improving accuracy.
+            Specifically, we design an efficient hybrid encoder to expeditiously process multi-scale features by decoupling intra-scale interaction and cross-scale fusion to improve speed.
+            Then, we propose the uncertainty-minimal query selection to provide high-quality initial queries to the decoder, thereby improving accuracy.
+          </p>
+          <p>
+            In addition, RT-DETR supports flexible speed tuning by adjusting the number of decoder layers to adapt to various scenarios without retraining.
+            Our RT-DETR-R50 / R101 achieves 53.1% / 54.3% AP on COCO and 108 / 74 FPS on T4 GPU, outperforming previously advanced YOLOs in both speed and accuracy.
+            Furthermore, RT-DETR-R50 outperforms DINO-R50 by 2.2% AP in accuracy and about 21 times in FPS.
+            After pre-training with Objects365, RT-DETR-R50 / R101 achieves 55.3% / 56.2% AP.
+          </p>
+        </div>
+
+      </div>
+    </div>
+    <br />
+
+    <!-- NMS. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+          <h2 class="title is-3">NMS Analysis</h2>
+        <div class="content has-text-justified">
+        <p>
+          NMS is a widely used post-processing algorithm in object detection, employed to eliminate overlapping output boxes.
+          Two thresholds are required in NMS: confidence threshold and IoU threshold.
+          Specifically, the boxes with scores below the confidence threshold are directly filtered out,
+          and whenever the IoU of any two boxes exceeds the IoU threshold, the box with the lower score will be discarded.
+          This process is performed iteratively until all boxes of every category have been processed.
+          Thus, the execution time of NMS primarily depends on the number of boxes and two thresholds.
+          We leverage YOLOv5 (anchor-based) and YOLOv8 (anchor-free) for analysis.
+        </p>
+        </div>
+
+        <div class="columns is-centered">
+
+          <div class="column">
+            <div class="content">
+              <h3 class="title is-4"></h3>
+              <div class="column is-12">
+                <img src="./static/images/nms.jpg"
+                     class="interpolation-image"
+                     alt="Interpolate nms image."/>
+              </div>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="content">
+              <div class="column is-15">
+                <img src="./static/images/nms_table.jpg"
+                     class="interpolation-image"
+                     alt="Interpolate nms_table image."/>
+              </div>
+              <div class="content has-text-justified">
+              <p>
+                We use YOLOv8 to evaluate the accuracy on the COCO val2017 and test the execution time of the NMS under different hyperparameters.
+                We test the speed on T4 GPU with TensorRT FP16, and the input and preprocessing remain consistent.
+              </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="content has-text-justified">
+        <p>
+          We count the number of boxes remaining after filtering the output boxes with different confidence thresholds on the same input.
+          As the confidence threshold increases, more prediction boxes are filtered out, and the number of remaining boxes that need to calculate IoU decreases, thus reducing the execution time of NMS.
+          With a confidence threshold of 0.001 and an IoU threshold of 0.7, YOLOv8 achieves the best AP results, but the corresponding NMS time is at a higher level.
+        </p>
+        </div>
+
+
+    <!--/ Overview. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+          <h2 class="title is-3">Method</h2>
+          <h3 class="title is-4">Overview</h3>
+          <div class="columns is-centered interpolation-panel">
+            <div class="column is-15">
+              <img height="500" src="./static/images/overview.jpg"
+                   class="interpolation-image"
+                   alt="Interpolate overview image."/>
+            </div>
+          </div>
+        <div class="content has-text-justified">
+          <p>
+            We feed the features from the last three stages of the backbone into the encoder.
+            The efficient hybrid encoder transforms multi-scale features into a sequence of image features through the
+            Attention-based Intra-scale Feature Interaction (AIFI) and the CNN-based Cross-scale Feature Fusion (CCFF).
+            Then, the uncertainty-minimal query selection selects a fixed number of encoder features to serve as initial object queries for the decoder.
+            Finally, the decoder with auxiliary prediction heads iteratively optimizes object queries to generate categories and boxes.
+          </p>
+        </div>
+
+        <h3 class="title is-4">Hybrid Encoder</h3>
+        <div class="columns is-centered interpolation-panel">
+            <div class="column is-12">
+            <img height="500" src="./static/images/encoder.jpg"
+                 class="interpolation-image"
+                 alt="Interpolate encoder image."/>
+          </div>
+        </div>
+        <div class="content has-text-justified">
+          <p>
+            The evolution of the hybrid encoder. <b>SSE</b> represents the single-scale Transformer encoder, <b>MSE</b> represents the multi-scale Transformer encoder,
+            and <b>CSF</b> represents cross-scale fusion. <b>AIFI</b> and <b>CCFF</b> are the two modules designed into our hybrid encoder.
+          </p>
+        </div>
+
+        <h3 class="title is-4">Uncertainty-minimal Query Selection</h3>
+          <div>
+            <img width="500" src="./static/images/scatter.jpg"
+                 alt="Interpolate scatter image."/>
+          </div>
+        <div class="content has-text-justified">
+          <p>
+            To analyze the effectiveness of the uncertainty-minimal query selection, we visualize the classification scores
+            and IoU scores of the selected features on COCO val2017.
+            We draw the scatterplot with classification scores greater than 0.5.
+            The purple and green dots represent the selected features from the model trained with uncertainty-minimal query selection and vanilla query selection, respectively.
+            The closer the dot is to the top right of the figure, the higher the quality of the corresponding feature, i.e.,
+            the more likely the predicted category and box are to describe the true object.
+            The top and right density curves reflect the number of dots for two types.
+            The most striking feature of the scatterplot is that the purple dots are concentrated in the top right of the figure, while the green dots are concentrated in the bottom right.
+            This shows that uncertainty-minimal query selection produces more high-quality encoder features.
+          </p>
+        </div>
+
+      </div>
+    </div>
+    <br />
+    <!-- Paper video. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Video</h2>
+        <div class="publication-video">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/TbaLWroPYbo?si=n6qolSSDtyD0dz0a"
+                  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+    <!--/ Paper video. -->
+    <br />
+    <!--/ Overview. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Qualitative Results</h2>
+          <h3 class="title is-4">Complex Scenarios</h3>
+          <div class="columns is-centered interpolation-panel">
+            <div class="column is-12">
+            <img src="./static/images/complex scenarios.jpg"
+                alt="Interpolate complex scenarios image."/>
+            </div>
+          </div>
+        <br />
+          <div>
+            <h3 class="title is-4">Difficult Conditions</h3>
+            <div class="columns is-centered interpolation-panel">
+              <div class="column is-12">
+                <img height="500" src="./static/images/difficult conditions.jpg"
+                     alt="Interpolate difficult conditions image."/>
+              </div>
+          </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!--<section class="section" id="BibTeX">-->
+<!--  <div class="container is-max-desktop content">-->
+<!--    <h2 class="title">BibTeX</h2>-->
+<!--    <pre><code>@article{park2021nerfies,-->
+<!--  author    = {Park, Keunhong and Sinha, Utkarsh and Barron, Jonathan T. and Bouaziz, Sofien and Goldman, Dan B and Seitz, Steven M. and Martin-Brualla, Ricardo},-->
+<!--  title     = {Nerfies: Deformable Neural Radiance Fields},-->
+<!--  journal   = {ICCV},-->
+<!--  year      = {2021},-->
+<!--}</code></pre>-->
+<!--  </div>-->
+<!--</section>-->
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            The source code is based on the <a href="https://nerfies.github.io/">Nerfies</a> project page. We thank the authors for creating and opening it.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
