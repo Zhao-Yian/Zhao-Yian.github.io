@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Interactive Segment-and-Manipulate 3D Gaussians">
+  <meta name="keywords" content="3D Interactive Segmentation, 3D Manipulation, 3D Gaussian Splatting">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>iSegMan: Interactive Segment-and-Manipulate 3D Gaussians</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">iSegMan: Interactive Segment-and-Manipulate 3D Gaussians</h1>
+          <div class="is-size-3 publication-authors">
+            <span class="author-block" style="color:red">CVPR 2025</span>
+          </div>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              Yian Zhao<sup>1,3</sup>,</span>
+            <span class="author-block">
+              Wanshi Xu<sup>1,3</sup>,</span>
+            <span class="author-block">
+              Ruochong Zheng<sup>1,3</sup>,
+            </span>
+            <span class="author-block">
+              Pengchong Qiao<sup>1,3</sup>,
+            </span>
+            <span class="author-block">
+              Chang Liu<sup>4</sup>
+            </span>
+            <span class="author-block">
+              Jie Chen<sup>1,2,3*</sup>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>School of ECE, Peking University</span>
+            <span class="author-block"><sup>2</sup>Peng Cheng Laboratory</span>
+            <span class="author-block"><sup>3</sup>AI for Science (AI4S)-Preferred Program, Peking University</span>
+            <span class="author-block"><sup>4</sup>Department of Automation and BNRist, Tsinghua University</span>
+          </div>
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <!-- Appendix Link. -->
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Appendix</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+              <span class="link-block">
+                <a href="https://youtu.be/mVhbVamzJSs"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/Zhao-Yian/iSegMan"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+              <!-- Demo Link. -->
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>Demo</span>
+                  </a>
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Abstract</h2>
+          <div>
+            <img width="500" src="./static/images/motivation.jpg"
+                 class="interpolation-image"
+                 alt="Interpolate motivation image."/>
+          </div>
+        <div class="content has-text-justified">
+          <p>
+            The efficient rendering and explicit nature of 3DGS promote the advancement of 3D scene manipulation.
+            However, existing methods typically encounter challenges in controlling the manipulation region and are unable to furnish the user with interactive feedback, which inevitably leads to unexpected results.
+            Intuitively, incorporating interactive 3D segmentation tools can compensate for this deficiency. 
+            Nevertheless, existing segmentation frameworks impose a pre-processing step of scene-specific parameter training, which limits the efficiency and flexibility of scene manipulation.
+          </p>
+          <p>
+            To deliver a 3D region control module that is well-suited for scene manipulation with reliable efficiency, we propose <b>i</b>nteractive <b>Seg</b>ment-and-<b>Man</b>ipulate 3D Gaussians (<b>iSegMan</b>), 
+            an interactive segmentation and manipulation framework that only requires simple 2D user interactions in any view.
+            To propagate user interactions to other views, we propose Epipolar-guided Interaction Propagation (<b>EIP</b>), which innovatively exploits epipolar constraint for efficient and robust interaction matching.
+            To avoid scene-specific training to maintain efficiency, we further propose the novel Visibility-based Gaussian Voting (<b>VGV</b>), which obtains 2D segmentations from SAM and models the region extraction as a voting game between 2D Pixels and 3D Gaussians based on Gaussian visibility.
+            Taking advantage of the efficient and precise region control of EIP and VGV, we put forth a <b>Manipulation Toolbox</b> to implement various functions on selected regions, enhancing the controllability, flexibility and practicality of scene manipulation.
+            Extensive results on 3D scene manipulation and segmentation tasks fully demonstrate the significant advantages of iSegMan.
+          </p>
+        </div>
+      </div>
+    </div>
+    <br />
+    <!--/ Overview. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+          <h2 class="title is-3">Method</h2>
+          <div class="columns is-centered interpolation-panel">
+            <div class="column is-12">
+              <img height="500" src="./static/images/overview.jpg"
+                   class="interpolation-image"
+                   alt="Interpolate overview image."/>
+            </div>
+          </div>
+        <div class="content has-text-justified">
+          <p>
+            iSegMan contains two novel region control algorithms that are well-suited for scene manipulation with reliable efficiency: Epipolar-guided Interaction Propagation (EIP) and Visibility-based Voting Game (VGV), 
+            and a Manipulation Toolbox that includes various manipulation functions.
+            EIP accepts 2D user interactions in any view and leverages epipolar constraint to efficiently and robustly propagate user interactions to other views.
+            To avoid scene-specific training to maintain efficiency, VGV obtains 2D mask from SAM and then models the 3D region extraction as a voting game between 2D Pixels and 3D Gaussians based on Gaussian visibility.
+            Based on the versatile manipulation functions, iSegMan greatly enhances the controllability, flexibility and practicality of 3D scene manipulation.
+          </p>
+        </div>
+
+        <div class="columns is-centered interpolation-panel">
+            <div class="column is-12">
+            <img height="500" src="./static/images/loop.jpg"
+                 class="interpolation-image"
+                 alt="Interpolate loop image."/>
+          </div>
+        </div>
+        <div class="content has-text-justified">
+          <p> 
+          </p>
+        </div>
+      </div>
+    </div>
+    <br />
+    <!-- Paper video. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Video</h2>
+        <div class="publication-video">
+          <iframe width="1280" height="721" src="https://www.youtube.com/embed/mVhbVamzJSs" title="[CVPR 2025] iSegMan: Interactive Segment-and-Manipulate 3D Gaussians" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+    <!--/ Paper video. -->
+    <br />
+    <!--/ Overview. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Qualitative Results</h2>
+        <h3 class="title is-4">Results of Interactive 3D Segmentation</h3>
+          <div class="columns is-centered interpolation-panel">
+            <div class="column is-12">
+            <img src="./static/images/segmentation.jpg"
+                alt="Interpolate segmentation image."/>
+            </div>
+          </div>
+        <br />
+          <h3 class="title is-4">Results of Semantic Editing</h3>
+          <div class="columns is-centered interpolation-panel">
+            <div class="column is-12">
+            <img src="./static/images/editing.jpg"
+                alt="Interpolate editing image."/>
+            </div>
+          </div>
+        <br />
+          <div>
+            <h3 class="title is-4">Results of other Manipulation Functions</h3>
+            <div class="columns is-centered interpolation-panel">
+              <div class="column is-12">
+                <img height="500" src="./static/images/manipulation.jpg"
+                     alt="Interpolate manipulation image."/>
+              </div>
+          </div>
+      </div>
+      <br />
+      <div>
+        <h3 class="title is-4">Comparison of Semantic Editing</h3>
+        <div class="columns is-centered interpolation-panel">
+          <div class="column is-12">
+            <img height="500" src="./static/images/comparison.jpg"
+                 alt="Interpolate comparison image."/>
+          </div>
+      </div>
+  </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!--<section class="section" id="BibTeX">-->
+<!--  <div class="container is-max-desktop content">-->
+<!--    <h2 class="title">BibTeX</h2>-->
+<!--    <pre><code>@article{park2021nerfies,-->
+<!--  author    = {Park, Keunhong and Sinha, Utkarsh and Barron, Jonathan T. and Bouaziz, Sofien and Goldman, Dan B and Seitz, Steven M. and Martin-Brualla, Ricardo},-->
+<!--  title     = {Nerfies: Deformable Neural Radiance Fields},-->
+<!--  journal   = {ICCV},-->
+<!--  year      = {2021},-->
+<!--}</code></pre>-->
+<!--  </div>-->
+<!--</section>-->
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            The source code is based on the <a href="https://nerfies.github.io/">Nerfies</a> project page. We thank the authors for creating and opening it.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
