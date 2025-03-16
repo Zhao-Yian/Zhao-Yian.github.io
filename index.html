@@ -1,194 +1,506 @@
-<!DOCTYPE html>
-<html lang="cx">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="keywords" content="Yian Zhao, Zhao Yian, zhaoyian, 赵祎安, DUT, PKU, Peking University, IDEA研究院"> 
+		<meta name="description" content="Yian Zhao&#39;s Home">
+		<meta name="google-site-verification" content="yy_3iiS_X6pJdegdwitJMrH0LRLHXwpjrV9RKLXxKjg">
+		<meta name="google-site-verification" content="yy_3iiS_X6pJdegdwitJMrH0LRLHXwpjrV9RKLXxKjg">
+		<link rel="stylesheet" href="./css/jemdoc.css" type="text/css">
+		<title>Yian Zhao (赵祎安)</title>
+		<style>
+			table {
+				border-collapse: collapse;
+			}
+			.smaller-image {
+			width: 20%;
+			}
+			.container {
+				position: relative;
+				display: inline-block;   
+			}
 
-<head>
-  <title>Yian Zhao's Homepage - Peking University</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta charset="utf-8" />
-  <meta name="keywords" content="" />
-  <script>
-    addEventListener("load", function () {
-      setTimeout(hideURLbar, 0);
-    }, false);
-
-    function hideURLbar() {
-      window.scrollTo(0, 1);
-    }
-  </script>
-  <!-- Custom Theme files -->
-  <link href="css/bootstrap.css" type="text/css" rel="stylesheet" media="all">
-  <link href="css/style.css" type="text/css" rel="stylesheet" media="all">
-  <!-- font-awesome icons -->
-  <link href="css/fontawesome-all.min.css" rel="stylesheet">
-  <!-- //Custom Theme files -->
-  <!-- online-fonts -->
-  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet">
-  <!-- //online-fonts -->
+			.image {
+				display: block;
+				border-radius: 10px;
+				max-width: 100%;
+			}
+			.video-label {
+				position: absolute;
+				top: 5px;
+				left: 5px;
+				background-color: #ea3323;
+				color: white;
+				padding: 0px 10px;
+				border-radius: 3px;
+				font-weight: bold;
+				box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+				width: 40px;
+				height: 20px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-size:small;
+			}
+			.research-hightlight {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr); /* 5列 */
+				/* grid-template-rows: repeat(4, 1fr);  */
+				gap: 10px; /* 网格项之间的间隙 */
+			}
+			.arxiv-label {
+				position: absolute;
+				top: 10px;
+				left: -5px;
+				background-color: #a624a6;
+				color: white;
+				padding: 0px 10px;
+				border-radius: 3px;
+				font-weight: bold;
+				box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+				width: 40px;
+				height: 20px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-size:x-small;
+			}
+		</style>
+		<script type="text/javascript" src="./files/jquery-1.12.4.min.js"></script>
+		<meta name="google-site-verification" content="RmRCKoAXAT6rtzTsOTkyvuJiKVINXoP9VDPktJ0Hl3Q" />
+		
 </head>
+<body data-new-gr-c-s-check-loaded="14.1163.0" data-gr-ext-installed="">
+<div id="layout-content" style="margin-top:25px">
+ <a href="https://github.com/Zhao-Yian" class="github-corner"><svg width="80" height="80" viewBox="0 0 250 250" style="fill: #527bbd; color:#fff; position: absolute; top: 0; border: 0; right: 0;"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
 
-<body>
-  <div class="sidenav">
-    <div class="side_top"> <img src="images/001.jpg" alt="news image" class="img-fluid navimg">
-      <h1> Yian Zhao - 赵祎安 <br>
-        <!--[CV - <a href="files/CV/chenxin_cv_cn_201803.pdf"><font size="4">中文</font></a> / <a href="files/CV/chenxin_cv_en_202007.pdf">English</a>]<br>-->
-        <!--[CV - <font size="4">中文</font>/ <a href="files/CV/chenxin_cv_en_202011.pdf">English</a>]<br>-->
-        <a href="files/CV/CV-Yian Zhao.pdf">CV | Resume</a> - 简历<br>
-        <a href="mailto:zhaoyian@stu.pku.edu.cn">Email</a> | <a
-          href="https:">LinkedIn</a> | <a
-          href="https://github.com/Zhao-Yian">GitHub</a><br>
-        <a href="https://aideadlin.es/?sub=ML,CV,CG,NLP,RO,SP,DM">Conference Timer</a><br>
-        <a href="https://scholar.google.com/citations?user=1ncPLCYAAAAJ&hl=en">Google Scholar</a>
-      </h1>
-    </div>
-    <!-- header -->
-    <header>
-      <div class="container-fluid px-5 ">
-        <nav class="mnu mx-auto">
-          <label for="drop" class="toggle">Menu</label>
-          <input type="checkbox" id="drop">
-          <ul class="menu">
-            <!--<li><a href="index.html">Home</a></li-->
-            <li class="mt-sm-0"><a href="#about" class="scroll">Bio</a></li>
-            <!-- <li class="mt-sm-3"><a href="./Art.html" class="scroll">Art</a></li> -->
-            <li class="mt-sm-3"><a href="#publication" class="scroll">Publications</a></li>
-            <!-- <li class="mt-sm-3"><a href="#experience" class="scroll">Experience</a></li> -->
-            <!-- <li class="mt-sm-3"><a href="#skill" class="scroll">Skills</a></li> -->
-          </ul>
-        </nav>
-      </div>
-    </header>
-  </div>
-  <div class="main" id="about">
-    <div class="banner-text-w3ls">
-      <div>
-        <div class="mx-auto text-left">
-          <h1><strong>Yian Zhao - 赵祎安</strong></h1>
-          <!--<h5>Master student.</h5> -->
-          <h6>zhaoyian@stu.pku.edu.cn</h6><br>
-          <h5><a href="https://www.pku.edu.cn/"><b>Peking University - 北京大学</b></a></h5>
-          <h5><a href="https://www.dlut.edu.cn/"><b>Dalian University of Technology - 大连理工大学 </b></a></h5>
-          <!-- <br> -->
-          <!-- <h5><a href="https://www.dgene.com/cn/">DGene</a> </h5> -->
-          <!-- <p>. </p> -->
-          <!-- <p class="banp mt-5"> </p> -->
-          <br>
-          I am currently a Master student in <a href="https://www.pku.edu.cn/">Peking University</a>,
-          advised by <a href="https://scholar.google.com/citations?user=ZAZFfwwAAAAJ&hl=en">Prof. Jie Chen</a>. Before this, I received a
-          B.S. degree in <a href="https://www.dlut.edu.cn/">Dalian University of Technology</a>.
-          <br><br>
-          My research interests are <strong>Object Detection and Segmentation</strong> and <strong>3D AI Generated Content</strong>, especially:
-          </p>
-          <li>Real-time Object Detection, Interactive Segmentation</li>
-          <li>3D Gaussian Splatting</li>
-          <!-- <li>Geometric deep learning</li>        -->
-          <!--a class="btn btn-primary mt-lg-5 mt-3 agile-link-bnr" href="#experience" role="button">Learn More</a-->
-          <br>
-          <font color="#f33"><b>News!</b></font>
-          </p>
-          <!-- <li>[2022.11]&ensp; Submit four4 Papers.</li> -->
-          <li>[2025.02]&ensp; One paper accepted at <strong>CVPR 2025</strong>.</li>
-          <li>[2024.02]&ensp; Two paper accepted at <strong>CVPR 2024</strong> <font color="#f33"><b>Highlight</b></font>.</li>
-          <li>[2023.07]&ensp; One papers accepted at <strong>ICCV 2023</strong>.</li>
-          <li>[2023.02]&ensp; One paper accepted at <strong>CVPR 2023</strong> <font color="#f33"><b>Highlight</b></font>.</li>
-        </div>
-      </div>
-    </div>
-    <section class="publication" id="publication">
-      <div class="container-fluid py-lg-1">
-        <h3 class="w3_head mb-5">Selected Publications <font size="4"><a href="https://scholar.google.com/citations?user=1ncPLCYAAAAJ&hl=en">(Complete List…)</a>
-          </font>
-        </h3>
+<table>
+	<tbody>
+		<tr>
+			<td width="720">
+				<div id="toptitle">					
+					<h1>Yian Zhao (赵祎安)</h1>
+				</div>
+<!--				<img src="./files/institute/pku.png" alt="" style="width: 10%;">-->
+				<h3 style="margin-top: -20px;">Master Student @ PKU </h3>
+				<h3 style="margin-top: -10px;">2D/3D Visual Perception and Understanding</h3>
+				<p  style="margin-top: 20px;">
+					<a href="mailto:zhaoyian.zh@gmail.com" target="_blank"><img src="./files/icon/email.png" height="32px" style="margin-bottom:-4px"></a>&nbsp;
+					<a href="https://scholar.google.com/citations?user=1ncPLCYAAAAJ&hl=en" target="_blank"><img src="./files/icon/google_scholar.png" height="30px" style="margin-bottom:-3px"></a>&nbsp;
+					<a href="https://github.com/Zhao-Yian" target="_blank"><img src="./files/icon/github_s.jpg" height="30px" style="margin-bottom:-3px"></a>&nbsp;
+					<a href="./files/my_wechat.jpg" target="_blank"><img src="./files/icon/wechat.png" height="30px" style="margin-bottom:-3px"></a>&nbsp;
+					<a href="https://www.zhihu.com/people/xing-chen-67-79-6" target="_blank"><img src="./files/icon/zhihu.png" height="30px" style="margin-bottom:-3px"></a>&nbsp;
+					<a href="https://www.xiaohongshu.com/user/profile/5f7563b00000000001005032" target="_blank"><img src="./files/icon/xiaohongshu.png" height="31px" style="margin-bottom:-4px"></a>&nbsp;
+					<a href="./files/CV/CV-Yian Zhao.pdf">[Resume]</a>&nbsp;
+					<br><br>
+					<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fzhao-yian.github.io&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/></a>
+<!--					<img alt="GitHub User's stars" src="https://img.shields.io/github/stars/Zhao-Yian">-->
+<!--					<img alt="GitHub followers" src="https://img.shields.io/github/followers/Zhao-Yian">-->
+				</p>
+			</td>
+			<td>
+				<img src="./images/001.jpg" border="0" width="150"><br>
+			</td>
+		</tr><tr>
+	</tr></tbody>
+</table>
 
-        <div class="row paper_box">
-          <div class="col-md-4 col-12 paper_img"> <video
-              src="files/Paper/CVPR25_iSegMan/Demo.mp4" width="90%"
-              playsinline="" autoplay="autoplay" loop="loop" preload="" muted="" alt="Popup Image" class="img-fluid">
-          </div>
-          <div class="col-md-8 col-12 paper_content">
-            <h5><b>iSegMan: Interactive Segment-and-Manipulate 3D Gaussians<br>
-            </b></h5>
-            <p><strong>Yian Zhao</strong>, Wanshi Xu, Ruochong Zheng, Pengchong Qiao, Chang Liu, Jie Chen<br>
-            </p>
-            <p> <font color="#000000"><b>CVPR 2025</b></font></p>
-            <p>
-              [<a href="">Arxiv</a>]
-              [<a href="https://zhao-yian.github.io/iSegMan/" target=_blank>Project</a>]
-              [<a href="files/Paper/CVPR25_iSegMan/Demo.mp4" target=_blank>Video</a>]
-            </p>
-          </div>
-        </div>
 
-        <div class="row paper_box">
-            <div class="col-md-4 col-12 paper_img"> <video
-                src="files/Paper/CVPR24_RT-DETR/Demo.mp4" width="90%"
+<h2 style="margin-top: -10px;">Biography</h2>
+<div style="font-size: 15px">
+Hi! I am <strong>Yian Zhao (Chinese name: 赵祎安)</strong>, currently a Master student in <a href="https://www.pku.edu.cn/">Peking University</a> (expected graduation in June 2026),
+advised by <a href="https://scholar.google.com/citations?user=ZAZFfwwAAAAJ&hl=en">Prof. Jie Chen</a>. Before this, I received a
+B.S. degree in <a href="https://www.dlut.edu.cn/">Dalian University of Technology</a>.
+<br><br>
+<p>My research interests mainly focus on <b>2D/3D Visual Perception and Understanding </b>, especially on Real-time Object Detection, Interactive Segmentation, and Interactive Manipulation and Stylization of 3D Gaussian Splatting.</p>
+<p><i style="color: red; display: inline;">Feel free to contact me by email if you are interested in discussing or collaborating with me.</i></p>
+</div>
+
+<h2>News</h2>
+<ul>
+	<li><font color="#f33"><b>Sincerely looking for PhD Positions for Fall 2026 admission!</b></font></li>
+	<li>[2025.02]&ensp; One paper accepted at <strong>CVPR 2025</strong>.</li>
+	<li>[2024.04]&ensp; One paper was selected as <strong>CVPR 2024</strong> <font color="#f33"><b>Highlight (Top 2.5%)!</b></font></li>
+	<li>[2024.02]&ensp; Two paper accepted at <strong>CVPR 2024</strong>.</li>
+	<li>[2023.07]&ensp; One papers accepted at <strong>ICCV 2023</strong>.</li>
+	<li>[2023.04]&ensp; One paper was selected as <strong>CVPR 2023</strong> <font color="#f33"><b>Highlight (Top 2.5%)!</b></font></li>
+	<li>[2023.02]&ensp; One paper accepted at <strong>CVPR 2023</strong>.</li>
+</ul>
+</div>
+
+<h2>Education</h2>
+	<table id="tbPublications" width="100%">
+		<tbody>
+		<tr>
+			<td width="320">
+			<img src="./files/institute/pku1.png" width="220px" style="margin-left: 40px">
+			</td>				
+			<td>
+				<p><b>Peking University (PKU), China</b></p>
+				<div style="font-size: 12px">Master Student, supervised by Prof. <a href="https://scholar.google.com/citations?user=ZAZFfwwAAAAJ&hl=en">Jie Chen</a>.<div>
+				<div style="font-size: 12px">GPA: 3.89 / 4.00, Google Scholar Citations: 1500+</div>
+				<div style="font-size: 12px">Merit Student of Peking University</div>
+				<div style="font-size: 12px">Sep. 2023 - Jun. 2026 (expected)</div>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+	<table id="tbPublications" width="100%" style="margin-top: 0px">
+		<table>
+			<tr>
+				<td width="320">
+					<img src="./files/institute/dut.png" width="200px" style="margin-left: 50px">
+				</td>				
+				<td>
+					<p><b>Dalian University of Technology (DUT), China</b></p>
+					<div style="font-size: 12px">GPA: 3.78 / 4.00 (Top 1%)</div>
+					<div style="font-size: 12px">Sep. 2019 - Jun. 2023<div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+<h2> Publications | <a href="https://scholar.google.com/citations?user=1ncPLCYAAAAJ&hl=en">[Google Scholar]</a></h2>
+<div style="text-align: center; position: relative; margin-bottom: 50px; margin-top: 20px;">
+	<span style="position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%); background-color: rgba(128, 128, 128, 0.3); padding: 0 10px;">
+		<b>Selected Papers</b>
+	</span>
+</div>
+
+<table id="tbPublications" width="100%" cellspacing='0' style="background-color: #ffffdf;">
+	<tbody>
+	<tr style="width: 100%;">
+	<td width="20%" style="padding: 10px">
+			<div class="container">
+				<video
+                src="./files/Paper/CVPR24_RT-DETR/Demo.mp4" width="180px"
                 playsinline="" autoplay="autoplay" loop="loop" preload="" muted="" alt="Popup Image" class="img-fluid">
-            </div>
-            <!-- .Icon ends here -->
-            <div class="col-md-8 col-12 paper_content">
-              <h5><b>DETRs Beat YOLOs on Real-time Object Detection 🔥🔥🔥 <br>
-              </b></h5>
-              <p><strong>Yian Zhao</strong>, Wenyu Lv, Shangliang Xu, Jinman Wei, Guanzhong Wang, Qingqing Dang, Yi Liu, Jie Chen<br>
-              </p>
-              <p> <font color="#000000"><b>CVPR 2024</b></font></p>
-              <p>
-                [<a href="https://arxiv.org/pdf/2304.08069">Arxiv</a>]
-                [<a href="https://zhao-yian.github.io/RTDETR/" target=_blank>Project</a>]
-                [<a href="files/Paper/CVPR24_RT-DETR/Demo.mp4" target=_blank>Video</a>]
-              </p>
-            </div>
-          </div>
+			</div>
+		</td>
+	<td style="padding: 10px">
+			<b style="font-size: 15px; color: #456fc3;">DETRs Beat YOLOs on Real-time Object Detection 🔥🔥🔥 (Citations: 1300+)</b>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"><u><b>Yian Zhao</b></u>, Wenyu Lv, Shangliang Xu, Jinman Wei, Guanzhong Wang, Qingqing Dang, Yi Liu, Jie Chen<sup>†</sup></div>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"><p> <font color="#000000"><b>CVPR 2024</b></font></p></div>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"><a href="https://github.com/lyuwenyu/RT-DETR"><img alt="issues" src="https://img.shields.io/github/stars/lyuwenyu/RT-DETR"></a> / [<a href="https://arxiv.org/pdf/2304.08069">Arxiv</a>] / [<a href="https://zhao-yian.github.io/RTDETR/" target=_blank>Project</a>] / [<a href="files/Paper/CVPR24_RT-DETR/Demo.mp4" target=_blank>Video</a>] </div>
+		</td>
+	</tr>
+	</tbody>
+</table>
 
-          <div class="row paper_box">
-            <div class="col-md-4 col-12 paper_img"> <video
-                src="files/Paper/CVPR24_RT-DETR/Demo.mp4" width="90%"
+<table id="tbPublications" width="100%" cellspacing='0'>
+	<tbody>
+	<tr style="width: 100%;">
+	<td width="20%" style="padding: 10px">
+			<div class="container">
+				<video
+                src="./files/Paper/CVPR25_iSegMan/Demo.mp4" width="180px"
                 playsinline="" autoplay="autoplay" loop="loop" preload="" muted="" alt="Popup Image" class="img-fluid">
-            </div>
-            <div class="col-md-8 col-12 paper_content">
-              <h5><b>RT-DETRv2: Improved Baseline with Bag-of-Freebies for Real-Time Detection Transformer<br>
-              </b></h5>
-              <p>Wenyu Lv, <strong>Yian Zhao</strong>, Qinyao Chang, Kui Huang, Guanzhong Wang, Yi Liu<br>
-              </p>
-              <p> <font color="#000000"><b>Technical Report</b></font></p>
-              <p>
-                [<a href="https://arxiv.org/abs/2407.17140">Arxiv</a>]
-                [<a href="https://zhao-yian.github.io/RTDETR/" target=_blank>Project</a>]
-                [<a href="files/Paper/CVPR24_RT-DETR/Demo.mp4" target=_blank>Video</a>]
-              </p>
-            </div>
-          </div>
+			</div>
+		</td>
+	<td style="padding: 10px">
+			<b style="font-size: 15px; color: #456fc3;">iSegMan: Interactive Segment-and-Manipulate 3D Gaussians</b>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"><u><b>Yian Zhao</b></u>, Wanshi Xu, Ruochong Zheng, Pengchong Qiao, Chang Liu, Jie Chen<sup>†</sup></div>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"><p> <font color="#000000"><b>CVPR 2025</b></font></p></div>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px">[<a href="">Arxiv</a>] / [<a href="https://zhao-yian.github.io/iSegMan/" target=_blank>Project</a>] / [<a href="files/Paper/CVPR25_iSegMan/Demo.mp4" target=_blank>Video</a>] </div>
+		</td>
+	</tr>
+	</tbody>
+</table>
 
-        <div class="row paper_box">
-            <div class="col-md-4 col-12 paper_img"> <video src="files/Paper/CVPR24_GraCo/Demo.mp4" width="90%"
+
+<table id="tbPublications" width="100%" cellspacing='0'>
+	<tbody>
+	<tr style="width: 100%;">
+	<td width="20%" style="padding: 10px">
+			<div class="container">
+				<video
+                src="./files/Paper/CVPR24_GraCo/Demo.mp4" width="180px"
                 playsinline="" autoplay="autoplay" loop="loop" preload="" muted="" alt="Popup Image" class="img-fluid">
-            </div>
-            <div class="col-md-8 col-12 paper_content">
-              <h5><b>GraCo: Granularity-Controllable Interactive Segmentation<br>
-              </b></h5>
-              <p><strong>Yian Zhao</strong>, Kehan Li, Zesen Cheng, Pengchong Qiao, Xiawu Zheng, Rongrong Ji, Chang Liu, Li Yuan, Jie Chen<br>
-              </p>
-              <p> <font color="#000000"><b>CVPR 2024 <font color="#f33">Highlight</font></b></font></p>
-              <p>
-                [<a href="https://arxiv.org/pdf/2405.00587">Arxiv</a>]
-                [<a href="https://zhao-yian.github.io/GraCo/">Project</a>]
-                [<a href="files/Paper/CVPR24_GraCo/Demo.mp4">Video</a>]
-              </p>
-            </div>
-          </div>
+			</div>
+		</td>
+	<td style="padding: 10px">
+			<b style="font-size: 15px; color: #456fc3;">GraCo: Granularity-Controllable Interactive Segmentation</b>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"><u><b>Yian Zhao</b></u>, Kehan Li, Zesen Cheng, Pengchong Qiao, Xiawu Zheng, Rongrong Ji, Chang Liu, Li Yuan, Jie Chen<sup>†</sup></div>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"><p> <font color="#000000"><b>CVPR 2024 <font color="#f33">Highlight (Top 2.5%)</font></b></font></p></div>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"> [<a href="https://arxiv.org/pdf/2405.00587">Arxiv</a>] / [<a href="https://zhao-yian.github.io/GraCo/">Project</a>] / [<a href="files/Paper/CVPR24_GraCo/Demo.mp4">Video</a>] </div>
+		</td>
+	</tr>
+	</tbody>
+</table>
 
-        </div>
-    <br>
+<table id="tbPublications" width="100%" cellspacing='0'>
+	<tbody>
+	<tr style="width: 100%;">
+	<td width="20%" style="padding: 10px">
+			<div class="container">
+				<video
+                src="./files/Paper/CVPR24_RT-DETR/Demo.mp4" width="180px"
+                playsinline="" autoplay="autoplay" loop="loop" preload="" muted="" alt="Popup Image" class="img-fluid">
+			</div>
+		</td>
+	<td style="padding: 10px">
+			<b style="font-size: 15px; color: #456fc3;">RT-DETRv2: Improved Baseline with Bag-of-Freebies for Real-Time Detection Transformer</b>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px">Wenyu Lv, <u><b>Yian Zhao</b></u>, Qinyao Chang, Kui Huang, Guanzhong Wang, Yi Liu</div>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"><p> <font color="#000000"><b>Technical Report</b></font></p></div>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"> [<a href="https://arxiv.org/abs/2407.17140">Arxiv</a>] / [<a href="https://zhao-yian.github.io/RTDETR/" target=_blank>Project</a>] / [<a href="files/Paper/CVPR24_RT-DETR/Demo.mp4" target=_blank>Video</a>] </div>
+		</td>
+	</tr>
+	</tbody>
+</table>
 
-<!--    </section>-->
-<!--    &lt;!&ndash; //skill &ndash;&gt;-->
-<!--    &lt;!&ndash; <section> &ndash;&gt;-->
-<!--    <script type="text/javascript" id="clustrmaps"-->
-<!--            src="//clustrmaps.com/map_v2.js?d=68zbbUPSN_KYpXNHAJBzaPN4ToLTjzDXDRmCfDRJtFw&cl=ffffff&w=a"></script>-->
+<table id="tbPublications" width="100%" cellspacing='0'>
+	<tbody>
+	<tr style="width: 100%;">
+	<td width="20%" style="padding: 10px">
+			<div class="container">
+				<img src="./files/Paper/MIS.jpg" width="180px" style="box-shadow: 4px 4px 8px #888; margin-left: 0px; margin-top: 0px;">
+			</div>
+		</td>
+	<td style="padding: 10px">
+			<b style="font-size: 15px; color: #456fc3;">Multi-granularity Interaction Simulation for Unsupervised Interactive Segmentation</b>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px">Kehan Li, <u><b>Yian Zhao</b></u>, Zhennan Wang, Zesen Cheng, Peng Jin, Xiangyang Ji, Li Yuan, Chang Liu, Jie Chen<sup>†</sup></div>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"><p> <font color="#000000"><b>ICCV 2023</b></font></p></div>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"> [<a href="https://arxiv.org/abs/2303.13399">Arxiv</a>] / [<a href="https://github.com/lkhl/MIS" target=_blank>Project</a>] </div>
+		</td>
+	</tr>
+	</tbody>
+</table>
 
-    <div>
-    <p>
-    This cool template is stolen from <a href="https://chenxin.tech/"> Xin Chen</a>!
-    </p>
-    </div>
-</body>
+<table id="tbPublications" width="100%" cellspacing='0'>
+	<tbody>
+	<tr style="width: 100%;">
+	<td width="20%" style="padding: 10px">
+			<div class="container">
+				<img src="./files/Paper/ACSeg.jpg" width="180px" style="box-shadow: 4px 4px 8px #888; margin-left: 0px; margin-top: 0px;">
+			</div>
+		</td>
+	<td style="padding: 10px">
+			<b style="font-size: 15px; color: #456fc3;">ACSeg: Adaptive Conceptualization for Unsupervised Semantic Segmentation</b>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px">Kehan Li, Zhennan Wang, Zesen Cheng, Runyi Yu, <u><b>Yian Zhao</b></u>, Guoli Song, Chang Liu, Li Yuan, Jie Chen<sup>†</sup></div>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"><p> <font color="#000000"><b>CVPR 2023 <font color="#f33">Highlight (Top 2.5%)</font></b></font></p></div>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"> [<a href="https://arxiv.org/abs/2210.05944">Arxiv</a>] </div>
+		</td>
+	</tr>
+	</tbody>
+</table>
 
-</html>
+<table id="tbPublications" width="100%" cellspacing='0'>
+	<tbody>
+	<tr style="width: 100%;">
+	<td width="20%" style="padding: 10px">
+			<div class="container">
+				<img src="./files/Paper/JSAC.jpg" width="180px" style="box-shadow: 4px 4px 8px #888; margin-left: 0px; margin-top: 0px;">
+			</div>
+		</td>
+	<td style="padding: 10px">
+			<b style="font-size: 15px; color: #456fc3;">Blockchain-Enhanced Federated Learning Market With Social Internet of Things</b>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px">Pengfei Wang<sup>†</sup>, <u><b>Yian Zhao</b></u>, Mohammad S. Obaidat, Zongzheng Wei, Heng Qi, Chi Lin, Yunming Xiao, Qiang Zhang</div>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"><p> <font color="#000000"><b>IEEE Journal on Selected Areas in Communications (JSAC, JCR Q1, IF=13.8)</b></font></p></div>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"> [<a href="https://ieeexplore.ieee.org/document/9918042/">Paper</a>]</a></div>
+		</td>
+	</tr>
+	</tbody>
+</table>
+
+<table id="tbPublications" width="100%" cellspacing='0'>
+	<tbody>
+	<tr style="width: 100%;">
+	<td width="20%" style="padding: 10px">
+			<div class="container">
+				<img src="./files/Paper/IoT.jpg" width="180px" style="box-shadow: 4px 4px 8px #888; margin-left: 0px; margin-top: 0px;">
+			</div>
+		</td>
+	<td style="padding: 10px">
+			<b style="font-size: 15px; color: #456fc3;">Federated Unlearning With Momentum Degradation</b>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"><u><b>Yian Zhao</b></u>, Pengfei Wang<sup>†</sup>, Heng Qi, Jianguo Huang, Zongzheng Wei, Qiang Zhang</div>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"><p> <font color="#000000"><b>IEEE Internet of Things Journal (JCR Q1, IF=8.2)</b></font></p></div>
+			<div style="height: 5px;"></div>
+			<div style="font-size: 12px"> [<a href="https://ieeexplore.ieee.org/document/10269017/">Paper</a>]</a></div>
+		</td>
+	</tr>
+	</tbody>
+</table>
+
+<h2>Internship &amp; Research Experience</h2>
+<div style="height: 10px"></div>
+
+<table id="tbPublications" width="100%">
+	<tbody>
+	<tr>
+		<td width="250">
+		<img src="./files/institute/idea.png" width="200px" style="margin-left: 15px; padding-top: 0px;">
+		</td>
+		<td>
+		<p style="font-size: 15px"><b> IDEA 研究院 </b></p>
+		<p style="font-size: 12px">Mar. 2025 - Present, Research Intern</p>
+		<p style="font-size: 12px">Supervised by Prof. <a href="https://www.leizhang.org/">Lei Zhang</a></p>
+		</td>
+	</tr>
+</tbody>
+</table>
+
+<table id="tbPublications" width="100%">
+	<tbody>
+	<tr>
+		<td width="250">
+		<img src="./files/institute/tencent.jpg" width="200px" style="margin-left: 15px; padding-top: 0px;">
+		</td>
+		<td>
+		<p style="font-size: 15px"><b> Tencent AI Lab </b></p>
+		<p style="font-size: 12px">Apr. 2024 - Mar. 2025, Research Intern</p>
+		</td>
+	</tr>
+</tbody>
+</table>
+
+<table id="tbPublications" width="100%">
+	<tbody>
+	<tr>
+		<td width="250">
+		<img src="./files/institute/baidu.png" width="200px" style="margin-left: 15px; padding-top: 0px;">
+		</td>
+		<td>
+		<p style="font-size: 15px"><b> Baidu </b></p>
+		<p style="font-size: 12px">Nov. 2022 - Jun. 2023, Research Intern</p>
+		</td>
+	</tr>
+</tbody>
+</table>
+
+
+<h2>Competition Awards (Selected)</h2>
+<p></p>
+<table style="border-spacing:2px">
+	<tr></tr>
+	<td width="250">
+		<img src="./files/institute/challenge_cup.png" width="200px" style="margin-left: 15px; padding-top: 0px;">
+	</td>
+	<td style="font-size: 15px;">
+		<b>16th "Challenge Cup" Liaoning Province College Students' Extracurricular Academic Science and Technology Works Competition</b>
+		<p><b>第十六届"挑战杯"辽宁省大学生课外学术科技作品竞赛</b></p>
+		<p><i style="color: red; display: inline;"><b>Grand Prize</b></i> 🏆 </p>
+		<div style="font-size: 15px">With Haojun Tang et al. Supervised by <a href="https://pf-wang.github.io">Prof. Pengfei Wang.</a></div>
+	</td>
+</table>
+<table style="border-spacing:2px">
+	<tr></tr>
+	<td width="250">
+<!--		<img src="./files/institute/huawei.png" width="200px" style="box-shadow: 4px 4px 8px #888; margin-left: 32px; margin-top: 0px;">-->
+		<img src="./files/institute/huawei.png" width="200px" style="margin-left: 15px; padding-top: 0px;">
+	</td>				
+	<td style="font-size: 15px;">
+		<b>Huawei Developer Competition Autonomous Vehicle Challenge National Finals</b>
+		<p><b>华为开发者大赛无人车挑战赛全国总决赛</b></p>
+		<p><i style="color: red; display: inline;"><b>Winner</b></i> 🏆</p>
+		<div style="font-size: 15px">With Ziyu Yue, Ruixi You.</div>
+	</td>
+</table>
+
+<h2>Honors</h2>
+
+<div style="height: 200px; overflow: auto; font-size: 15px;">
+	<ul>
+		<li> [2024] University-Level Merit Student, Peking University</li>
+		<div style="margin-top: -10px;"></div>
+		<li> [2024] Third Prize Scholarship, Peking University</li>
+		<div style="margin-top: -10px;"></div>
+		<li> [2023] Outstanding Graduates of Liaoning Province</li>
+		<div style="margin-top: -10px;"></div>
+		<li> [2022] BaoSteel Outstanding Student Scholarship (宝钢奖学金), Dalian University of Technology (Awarded to top 1% students)</li>
+		<div style="margin-top: -10px;"></div>
+		<li> [2022] University-Level Merit Student, Dalian University of Technology</li>
+		<div style="margin-top: -10px;"></div>
+		<li> [2022] First Prize Scholarship, Dalian University of Technology (Awarded to top 3-5% students in academic performance)</li>
+		<div style="margin-top: -10px;"></div>
+		<li> [2021] National Scholarship, Dalian University of Technology (Ministry of Education of China)</li>
+		<div style="margin-top: -10px;"></div>
+		<li> [2021] University-Level Merit Student, Dalian University of Technology</li>
+		<div style="margin-top: -10px;"></div>
+		<li> [2021] First Prize Scholarship, Dalian University of Technology (Awarded to top 3-5% students in academic performance)</li>
+		<div style="margin-top: -10px;"></div>
+		<li> [2020] National Encouragement Scholarship, Dalian University of Technology (Ministry of Education of China)</li>
+		<div style="margin-top: -10px;"></div>
+		<li> [2020] University-Level Merit Student, Dalian University of Technology</li>
+		<div style="margin-top: -10px;"></div>
+		<li> [2020] First Prize Scholarship, Dalian University of Technology (Awarded to top 3-5% students in academic performance)</li>
+	</ul>
+</div>
+
+<h2>Clubs</h2>
+<ur style="font-size: 15px">
+	<li>2022 - Present, <a href="https://www.paddlepaddle.org.cn/ppdemd?n=/ppdemd/%E8%B5%B5%E7%A5%8E%E5%AE%89">PPDE (PaddlePaddle Developers Experts)</a> (飞桨开发者技术专家, PaddlePaddle is Baidu's open-source deep learning platform)</li>
+	<div style="margin-top: -10px;"></div>
+	<li>2022 - 2023, Founding leader of Dalian University of Technology PaddleClub (飞桨领航团)</li>
+	<div style="margin-top: -10px;"></div>
+	<li>2023 - Present, Openl 启智社区, 荣获2023年积极贡献者奖</li>
+</ur>
+
+
+<h2>Reports</h2>
+<div style="font-size: 15px">
+<div style="height: 4px"></div>
+[5/2023], <a href="https://ai.henu.edu.cn/info/1087/2087.htm" target="_blank">河南大学人工智能学院百度飞桨校园AI DAY主题讲座</a>
+<div style="height: 4px"></div>
+[11/2022], <a href="https://www.paddlepaddle.org.cn/support/news?action=detail&id=3188" target="_blank">《挺进热门专业的学生，怎样用飞桨“卷”到保研机会？》</a>
+</div>
+
+
+<div style="margin: -20pt;"></div>
+<div id="footer">
+	<div id="footer-text"></div>
+</div>
+
+<!-- <div style="content: center;">
+	<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+	<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+</div> -->
+	<p><center><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		<!-- <span id="busuanzi_container_site_pv"><span id="busuanzi_value_site_pv" style="color: red;"></span> Total Pageviews, since Apr.2024</center></p> -->
+		<a style="color: black; font-size: small;"><i>Latest updated in Mar. 2025</i></a>
+		<p></p><center> This cool template is stolen from <a href="https://tianxingchen.github.io/">Tianxing Chen</a></center><p></p>
+
+</div>
+
+<div class="jvectormap-tip"></div></body><grammarly-desktop-integration data-grammarly-shadow-root="true"><template shadowrootmode="open"><style>
+      div.grammarly-desktop-integration {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select:none;
+        user-select:none;
+      }
+
+      div.grammarly-desktop-integration:before {
+        content: attr(data-content);
+      }
+    </style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{&quot;mode&quot;:&quot;full&quot;,&quot;isActive&quot;:true,&quot;isUserDisabled&quot;:false}"></div></template></grammarly-desktop-integration></html>
