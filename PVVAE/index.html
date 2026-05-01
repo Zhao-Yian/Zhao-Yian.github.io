@@ -4,33 +4,28 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="PV-VAE: Video Generation with Predictive Latents">
-  <meta name="keywords" content="PV-VAE, Predictive Video VAE, video generation, latent diffusion, video VAE, predictive reconstruction">
+  <meta name="keywords" content="PV-VAE, Predictive Video VAE, video generation, video VAE, latent diffusion, predictive reconstruction">
   <meta name="author" content="Yian Zhao">
   <title>PV-VAE: Video Generation with Predictive Latents</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #060813;
-      --bg-soft: #0b1024;
-      --panel: rgba(16, 24, 48, 0.72);
-      --panel-strong: rgba(22, 32, 64, 0.92);
-      --line: rgba(159, 181, 255, 0.18);
-      --line-strong: rgba(159, 181, 255, 0.34);
-      --text: #f4f7ff;
-      --muted: #a9b4d0;
-      --subtle: #77829e;
-      --blue: #66e2ff;
-      --violet: #b48cff;
-      --pink: #ff72b6;
-      --green: #73f2b4;
-      --amber: #ffd37a;
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
-      --radius-xl: 30px;
-      --radius-lg: 22px;
-      --radius-md: 16px;
-      color-scheme: dark;
+      --ink: #172033;
+      --body: #334155;
+      --muted: #64748b;
+      --light: #f7f9fc;
+      --panel: #ffffff;
+      --line: #dbe3ef;
+      --line-dark: #cbd5e1;
+      --navy: #10243f;
+      --blue: #2563eb;
+      --blue-soft: #eaf1ff;
+      --red: #b91c1c;
+      --green: #047857;
+      --shadow: 0 18px 55px rgba(15, 23, 42, 0.10);
+      --radius: 18px;
     }
 
     * {
@@ -43,37 +38,12 @@
 
     body {
       margin: 0;
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
+      color: var(--body);
       background:
-        radial-gradient(circle at 12% 8%, rgba(102, 226, 255, 0.18), transparent 32rem),
-        radial-gradient(circle at 88% 0%, rgba(180, 140, 255, 0.22), transparent 34rem),
-        radial-gradient(circle at 52% 66%, rgba(255, 114, 182, 0.12), transparent 34rem),
-        linear-gradient(180deg, #050711 0%, #070b18 52%, #050711 100%);
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -2;
-      background-image:
-        linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
-      background-size: 54px 54px;
-      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent 78%);
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -1;
-      background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.08), transparent 42rem);
-      mix-blend-mode: screen;
+        linear-gradient(180deg, rgba(37, 99, 235, 0.045), rgba(255, 255, 255, 0) 420px),
+        var(--light);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
     }
 
     a {
@@ -81,32 +51,38 @@
       text-decoration: none;
     }
 
-    .page-shell {
-      width: min(1180px, calc(100% - 36px));
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .container {
+      width: min(1080px, calc(100% - 36px));
       margin: 0 auto;
     }
 
-    .nav {
+    .topbar {
       position: sticky;
-      top: 14px;
-      z-index: 20;
+      top: 0;
+      z-index: 30;
+      background: rgba(247, 249, 252, 0.88);
+      border-bottom: 1px solid rgba(219, 227, 239, 0.82);
+      backdrop-filter: blur(16px);
+    }
+
+    .topbar-inner {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 20px;
-      margin-top: 14px;
-      padding: 12px 14px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(6, 8, 19, 0.72);
-      backdrop-filter: blur(18px);
-      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.22);
+      justify-content: space-between;
+      gap: 22px;
+      min-height: 64px;
     }
 
     .brand {
       display: inline-flex;
       align-items: center;
       gap: 10px;
+      color: var(--ink);
       font-weight: 800;
       letter-spacing: -0.03em;
       white-space: nowrap;
@@ -117,14 +93,13 @@
       height: 34px;
       display: grid;
       place-items: center;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--blue), var(--violet) 55%, var(--pink));
-      color: #06101e;
-      font-weight: 900;
-      box-shadow: 0 0 34px rgba(102, 226, 255, 0.35);
+      border-radius: 9px;
+      color: #fff;
+      background: linear-gradient(135deg, #172033, #2563eb);
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.22);
     }
 
-    .nav-links {
+    .nav {
       display: flex;
       align-items: center;
       gap: 4px;
@@ -133,319 +108,164 @@
       font-weight: 700;
     }
 
-    .nav-links a {
-      padding: 10px 12px;
+    .nav a {
+      padding: 8px 11px;
       border-radius: 999px;
-      transition: color 180ms ease, background 180ms ease;
+      transition: background 160ms ease, color 160ms ease;
     }
 
-    .nav-links a:hover,
-    .nav-links a.active {
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.08);
+    .nav a:hover,
+    .nav a.active {
+      color: var(--blue);
+      background: var(--blue-soft);
     }
 
     .hero {
-      position: relative;
-      padding: 92px 0 54px;
+      padding: 74px 0 44px;
+      text-align: center;
     }
 
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(360px, 0.74fr);
-      gap: 34px;
-      align-items: center;
-    }
-
-    .eyebrow {
+    .venue {
       display: inline-flex;
       align-items: center;
-      gap: 9px;
-      padding: 8px 12px;
-      border: 1px solid rgba(102, 226, 255, 0.25);
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 7px 12px;
+      border: 1px solid #c8d7f2;
       border-radius: 999px;
-      background: rgba(102, 226, 255, 0.08);
-      color: #cbf7ff;
+      color: #24406d;
+      background: #eef5ff;
       font-size: 13px;
       font-weight: 800;
-      letter-spacing: 0.02em;
     }
 
-    .pulse-dot {
-      width: 9px;
-      height: 9px;
+    .venue::before {
+      content: "";
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 0 0 rgba(115, 242, 180, 0.7);
-      animation: pulse 2.2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(115, 242, 180, 0.6); }
-      70% { box-shadow: 0 0 0 12px rgba(115, 242, 180, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(115, 242, 180, 0); }
+      background: var(--blue);
     }
 
     h1 {
-      max-width: 850px;
-      margin: 24px 0 16px;
-      font-size: clamp(48px, 7.4vw, 96px);
-      line-height: 0.9;
-      letter-spacing: -0.08em;
+      max-width: 980px;
+      margin: 0 auto 18px;
+      color: var(--ink);
+      font-family: "Source Serif 4", Georgia, serif;
+      font-size: clamp(44px, 6vw, 78px);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
       text-wrap: balance;
     }
 
-    .gradient-text {
-      background: linear-gradient(110deg, #ffffff 10%, #8feaff 40%, #c9a8ff 66%, #ff91c9 92%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .subtitle {
-      max-width: 760px;
-      margin: 0;
-      color: var(--muted);
-      font-size: clamp(18px, 2vw, 22px);
-      line-height: 1.7;
+    .tagline {
+      max-width: 840px;
+      margin: 0 auto;
+      color: #475569;
+      font-size: clamp(17px, 2vw, 21px);
+      line-height: 1.65;
+      text-wrap: balance;
     }
 
     .authors {
-      margin-top: 26px;
-      color: var(--muted);
-      line-height: 1.8;
+      max-width: 960px;
+      margin: 26px auto 0;
+      color: #475569;
       font-size: 15px;
+      line-height: 1.8;
     }
 
     .authors strong {
-      color: var(--text);
+      color: var(--ink);
     }
 
     .affiliations {
-      color: var(--subtle);
+      margin-top: 4px;
+      color: var(--muted);
       font-size: 14px;
     }
 
-    .actions {
+    .links {
       display: flex;
+      justify-content: center;
       flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 30px;
+      gap: 10px;
+      margin-top: 28px;
     }
 
     .button {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      min-height: 46px;
-      padding: 0 18px;
-      border: 1px solid var(--line-strong);
+      min-height: 42px;
+      padding: 0 16px;
+      border: 1px solid var(--line-dark);
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text);
+      color: var(--ink);
+      background: #fff;
+      font-size: 14px;
       font-weight: 800;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
-      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
     }
 
     .button:hover {
-      transform: translateY(-2px);
-      border-color: rgba(102, 226, 255, 0.65);
-      background: rgba(102, 226, 255, 0.14);
+      transform: translateY(-1px);
+      border-color: #9bb6e9;
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.13);
     }
 
     .button.primary {
-      color: #04131c;
-      background: linear-gradient(135deg, var(--blue), var(--green));
-      border-color: transparent;
+      color: #fff;
+      border-color: var(--navy);
+      background: var(--navy);
     }
 
     .button.disabled {
-      opacity: 0.58;
-      pointer-events: none;
+      color: #738195;
+      background: #f3f6fa;
+      cursor: not-allowed;
+      box-shadow: none;
     }
 
-    .hero-card {
-      position: relative;
-      min-height: 530px;
-      padding: 22px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-xl);
-      background: linear-gradient(180deg, rgba(16, 24, 48, 0.76), rgba(10, 14, 31, 0.62));
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      isolation: isolate;
-    }
-
-    .hero-card::before {
-      content: "";
-      position: absolute;
-      inset: -40%;
-      background: conic-gradient(from 80deg, transparent, rgba(102, 226, 255, 0.16), transparent, rgba(180, 140, 255, 0.16), transparent);
-      animation: slow-spin 14s linear infinite;
-      z-index: -2;
-    }
-
-    .hero-card::after {
-      content: "";
-      position: absolute;
-      inset: 1px;
-      border-radius: calc(var(--radius-xl) - 1px);
-      background: linear-gradient(180deg, rgba(8, 12, 28, 0.88), rgba(8, 10, 22, 0.94));
-      z-index: -1;
-    }
-
-    @keyframes slow-spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .latent-stage {
-      position: relative;
-      height: 292px;
-      border-radius: 24px;
-      background:
-        radial-gradient(circle at 24% 28%, rgba(102, 226, 255, 0.16), transparent 15rem),
-        linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
-      border: 1px solid var(--line);
-      overflow: hidden;
-    }
-
-    .time-track {
-      position: absolute;
-      left: 24px;
-      right: 24px;
-      bottom: 28px;
-      height: 5px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--blue), var(--violet), rgba(255, 114, 182, 0.25));
-    }
-
-    .time-track::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      right: -2px;
-      width: 12px;
-      height: 12px;
-      border-top: 3px solid rgba(255, 255, 255, 0.82);
-      border-right: 3px solid rgba(255, 255, 255, 0.82);
-      transform: translateY(-50%) rotate(45deg);
-    }
-
-    .frame {
-      position: absolute;
-      width: 70px;
-      height: 92px;
-      border-radius: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 45%),
-        linear-gradient(160deg, rgba(102, 226, 255, 0.24), rgba(180, 140, 255, 0.18));
-      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.22);
-      animation: drift 5s ease-in-out infinite;
-    }
-
-    .frame::before,
-    .frame::after {
-      content: "";
-      position: absolute;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.78);
-    }
-
-    .frame::before {
-      width: 24px;
-      height: 7px;
-      left: 16px;
-      top: 20px;
-    }
-
-    .frame::after {
-      width: 32px;
-      height: 32px;
-      right: 12px;
-      bottom: 14px;
-      background: radial-gradient(circle at 35% 35%, #fff, rgba(115, 242, 180, 0.9) 45%, rgba(115, 242, 180, 0.08) 70%);
-    }
-
-    .frame.observed {
-      top: 54px;
-    }
-
-    .frame.predicted {
-      top: 70px;
-      border-style: dashed;
-      background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 45%),
-        linear-gradient(160deg, rgba(255, 114, 182, 0.16), rgba(180, 140, 255, 0.1));
-      opacity: 0.66;
-    }
-
-    .frame.f1 { left: 28px; animation-delay: 0s; }
-    .frame.f2 { left: 116px; animation-delay: 0.4s; }
-    .frame.f3 { left: 204px; animation-delay: 0.8s; }
-    .frame.f4 { left: 292px; animation-delay: 1.2s; }
-    .frame.f5 { left: 380px; animation-delay: 1.6s; }
-
-    @keyframes drift {
-      0%, 100% { transform: translateY(0) rotate(-1deg); }
-      50% { transform: translateY(-10px) rotate(1deg); }
-    }
-
-    .latent-chip {
-      position: absolute;
-      left: 28px;
-      top: 24px;
-      padding: 9px 12px;
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.26);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      color: #d9e4ff;
-      font-family: "JetBrains Mono", monospace;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .hero-metrics {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 18px;
-    }
-
-    .metric-card {
+    .figure-card {
+      margin-top: 36px;
       padding: 18px;
       border: 1px solid var(--line);
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.055);
+      border-radius: 22px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
     }
 
-    .metric-card .value {
-      font-family: "JetBrains Mono", monospace;
-      font-size: 30px;
-      font-weight: 800;
-      letter-spacing: -0.04em;
+    .figure-card img {
+      width: 100%;
+      border-radius: 12px;
+      background: #fff;
     }
 
-    .metric-card .label {
-      margin-top: 6px;
+    .caption {
+      margin: 12px auto 0;
       color: var(--muted);
       font-size: 13px;
-      line-height: 1.45;
+      line-height: 1.55;
+      text-align: left;
     }
 
-    .section {
-      padding: 70px 0;
+    .caption strong {
+      color: var(--ink);
     }
 
-    .section-header {
-      max-width: 760px;
-      margin-bottom: 28px;
+    section {
+      padding: 54px 0;
     }
 
-    .section-kicker {
+    .section-title {
+      margin-bottom: 22px;
+      text-align: center;
+    }
+
+    .kicker {
+      margin-bottom: 8px;
       color: var(--blue);
-      font-family: "JetBrains Mono", monospace;
       font-size: 12px;
       font-weight: 800;
       letter-spacing: 0.16em;
@@ -453,318 +273,269 @@
     }
 
     h2 {
-      margin: 10px 0 12px;
-      font-size: clamp(32px, 4.8vw, 56px);
-      line-height: 1;
-      letter-spacing: -0.055em;
+      margin: 0;
+      color: var(--ink);
+      font-family: "Source Serif 4", Georgia, serif;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
     }
 
-    .lead {
-      margin: 0;
-      color: var(--muted);
-      font-size: 18px;
+    .section-lead {
+      max-width: 820px;
+      margin: 12px auto 0;
+      color: #526173;
+      font-size: 17px;
       line-height: 1.75;
     }
 
-    .panel {
+    .paper-panel {
       border: 1px solid var(--line);
-      border-radius: var(--radius-xl);
+      border-radius: var(--radius);
       background: var(--panel);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
-    }
-
-    .abstract-panel {
-      display: grid;
-      grid-template-columns: 1fr 0.68fr;
-      gap: 0;
       overflow: hidden;
     }
 
+    .abstract-grid {
+      display: grid;
+      grid-template-columns: 1fr 0.78fr;
+    }
+
     .abstract-copy {
-      padding: 34px;
+      padding: 30px;
     }
 
     .abstract-copy p {
-      margin: 0 0 18px;
-      color: #cbd5f0;
-      font-size: 17px;
-      line-height: 1.78;
+      margin: 0 0 16px;
+      color: #3f4d5f;
+      font-size: 16px;
     }
 
     .abstract-copy p:last-child {
       margin-bottom: 0;
     }
 
-    .insight-card {
-      position: relative;
-      padding: 34px;
-      min-height: 100%;
+    .abstract-aside {
+      padding: 30px;
       border-left: 1px solid var(--line);
-      background:
-        radial-gradient(circle at 100% 0%, rgba(180, 140, 255, 0.22), transparent 18rem),
-        rgba(255, 255, 255, 0.04);
+      background: linear-gradient(180deg, #f8fbff, #eef5ff);
     }
 
-    .quote-mark {
-      font-family: "JetBrains Mono", monospace;
-      color: rgba(102, 226, 255, 0.65);
-      font-size: 62px;
-      line-height: 0.8;
-    }
-
-    .insight-card h3 {
-      margin: 10px 0 12px;
-      font-size: 25px;
-      line-height: 1.12;
-      letter-spacing: -0.04em;
-    }
-
-    .insight-card p {
-      color: var(--muted);
-      line-height: 1.72;
-      margin: 0;
-    }
-
-    .pipeline {
-      padding: 28px;
-      overflow: hidden;
-    }
-
-    .pipeline-grid {
+    .takeaways {
       display: grid;
-      grid-template-columns: 1fr auto 1fr auto 1fr;
-      gap: 16px;
-      align-items: stretch;
-    }
-
-    .stage {
-      min-height: 210px;
-      padding: 20px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      background: rgba(255, 255, 255, 0.045);
-    }
-
-    .stage-label {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      color: var(--subtle);
-      font-family: "JetBrains Mono", monospace;
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .stage h3 {
-      margin: 18px 0 10px;
-      font-size: 22px;
-      letter-spacing: -0.04em;
-    }
-
-    .stage p {
+      gap: 14px;
       margin: 0;
-      color: var(--muted);
-      line-height: 1.62;
-      font-size: 15px;
+      padding: 0;
+      list-style: none;
     }
 
-    .arrow {
+    .takeaways li {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      align-items: start;
+      color: #475569;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .takeaways span {
       display: grid;
       place-items: center;
-      color: var(--blue);
-      font-size: 26px;
-      font-weight: 900;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--navy);
+      font-weight: 800;
     }
 
-    .mini-frames {
+    .method-notes {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      margin-top: 20px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
     }
 
-    .mini-frame {
-      height: 54px;
-      border-radius: 12px;
-      background: linear-gradient(145deg, rgba(102, 226, 255, 0.32), rgba(180, 140, 255, 0.16));
-      border: 1px solid rgba(255, 255, 255, 0.16);
-    }
-
-    .mini-frame.drop {
-      background: rgba(255, 255, 255, 0.04);
-      border-style: dashed;
-      opacity: 0.72;
-    }
-
-    .latent-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 6px;
-      margin-top: 20px;
-    }
-
-    .latent-cell {
-      aspect-ratio: 1;
-      border-radius: 9px;
-      background: linear-gradient(135deg, rgba(102, 226, 255, 0.34), rgba(180, 140, 255, 0.18));
-      animation: cell-glow 2.8s ease-in-out infinite;
-    }
-
-    .latent-cell:nth-child(3n) {
-      background: linear-gradient(135deg, rgba(115, 242, 180, 0.34), rgba(102, 226, 255, 0.16));
-      animation-delay: 0.5s;
-    }
-
-    .latent-cell:nth-child(4n) {
-      background: linear-gradient(135deg, rgba(255, 114, 182, 0.28), rgba(180, 140, 255, 0.16));
-      animation-delay: 1s;
-    }
-
-    @keyframes cell-glow {
-      0%, 100% { opacity: 0.58; transform: scale(0.96); }
-      50% { opacity: 1; transform: scale(1); }
-    }
-
-    .decode-lines {
-      position: relative;
-      height: 72px;
-      margin-top: 24px;
-      overflow: hidden;
+    .note {
+      padding: 18px;
+      border: 1px solid var(--line);
       border-radius: 14px;
-      background: rgba(0, 0, 0, 0.18);
+      background: #fff;
     }
 
-    .decode-lines span {
-      position: absolute;
-      left: -30%;
-      width: 60%;
-      height: 3px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, transparent, var(--green), transparent);
-      animation: scan 2.6s linear infinite;
-    }
-
-    .decode-lines span:nth-child(1) { top: 18px; }
-    .decode-lines span:nth-child(2) { top: 36px; animation-delay: 0.45s; }
-    .decode-lines span:nth-child(3) { top: 54px; animation-delay: 0.9s; }
-
-    @keyframes scan {
-      to { transform: translateX(220%); }
-    }
-
-    .loss-strip {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 22px;
-    }
-
-    .pill {
-      padding: 8px 11px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.055);
-      color: #dbe4ff;
-      font-family: "JetBrains Mono", monospace;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .results-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .result-card {
-      position: relative;
-      padding: 24px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      background:
-        radial-gradient(circle at 90% 8%, rgba(102, 226, 255, 0.13), transparent 12rem),
-        rgba(255, 255, 255, 0.052);
-      min-height: 180px;
-      overflow: hidden;
-    }
-
-    .result-card::after {
-      content: "";
-      position: absolute;
-      inset: auto 20px 18px 20px;
-      height: 4px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--blue), var(--violet), var(--pink));
-      opacity: 0.72;
-    }
-
-    .result-card .metric {
-      font-family: "JetBrains Mono", monospace;
-      font-size: clamp(32px, 4vw, 46px);
-      font-weight: 900;
-      letter-spacing: -0.07em;
-    }
-
-    .result-card .metric span {
-      color: var(--green);
-      font-size: 0.48em;
+    .note h3 {
+      margin: 0 0 7px;
+      color: var(--ink);
+      font-size: 16px;
       letter-spacing: -0.02em;
-      vertical-align: super;
     }
 
-    .result-card h3 {
-      margin: 10px 0 8px;
-      font-size: 17px;
-    }
-
-    .result-card p {
+    .note p {
       margin: 0;
       color: var(--muted);
+      font-size: 14px;
+      line-height: 1.58;
+    }
+
+    .result-board {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .result-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #f8fbff, #fff);
+      overflow-x: auto;
+    }
+
+    .result-tab {
+      border: 1px solid var(--line-dark);
+      border-radius: 999px;
+      padding: 10px 15px;
+      color: #475569;
+      background: #fff;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .result-tab:hover {
+      transform: translateY(-1px);
+      border-color: #9bb6e9;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.10);
+    }
+
+    .result-tab.active {
+      color: #fff;
+      border-color: var(--navy);
+      background: var(--navy);
+      box-shadow: 0 12px 28px rgba(16, 36, 63, 0.18);
+    }
+
+    .result-panel {
+      display: none;
+      padding: 18px;
+      animation: panel-in 260ms ease both;
+    }
+
+    .result-panel.active {
+      display: block;
+    }
+
+    @keyframes panel-in {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .table-note {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
       line-height: 1.55;
+    }
+
+    .table-note strong {
+      color: var(--ink);
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .metric-table {
+      width: 100%;
+      min-width: 920px;
+      border-collapse: separate;
+      border-spacing: 0;
       font-size: 14px;
     }
 
-    .comparison {
-      margin-top: 20px;
-      overflow-x: auto;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      background: rgba(255, 255, 255, 0.044);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 740px;
-    }
-
-    th,
-    td {
-      padding: 15px 18px;
-      text-align: left;
+    .metric-table th,
+    .metric-table td {
+      padding: 13px 14px;
       border-bottom: 1px solid var(--line);
+      text-align: right;
       white-space: nowrap;
     }
 
-    th {
-      color: #d9e4ff;
-      background: rgba(255, 255, 255, 0.055);
-      font-size: 13px;
+    .metric-table th:first-child,
+    .metric-table td:first-child,
+    .metric-table th:nth-child(2),
+    .metric-table td:nth-child(2) {
+      text-align: left;
+    }
+
+    .metric-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      color: #334155;
+      background: #f8fbff;
+      font-size: 12px;
+      font-weight: 800;
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
 
-    td {
-      color: var(--muted);
-      font-size: 14px;
+    .metric-table tbody tr.method-row {
+      cursor: pointer;
+      transition: background 180ms ease, transform 180ms ease, box-shadow 180ms ease;
     }
 
-    tr:last-child td {
+    .metric-table tbody tr.method-row:hover {
+      background: #f8fbff;
+      transform: translateY(-1px);
+      box-shadow: inset 3px 0 0 rgba(37, 99, 235, 0.45);
+    }
+
+    .metric-table tbody tr.method-row.active {
+      background: #eef5ff;
+      box-shadow: inset 3px 0 0 var(--blue);
+    }
+
+    .metric-table tbody tr.pvvae {
+      background: #f3f7ff;
+    }
+
+    .metric-table tbody tr.pvvae .method {
+      color: var(--blue);
+    }
+
+    .metric-table tbody tr:last-child td {
       border-bottom: 0;
+    }
+
+    .metric-table .method {
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .metric-table .config {
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
     }
 
     .best {
@@ -772,134 +543,197 @@
       font-weight: 900;
     }
 
-    .method-name {
-      color: var(--text);
-      font-weight: 800;
+    .second {
+      color: var(--blue);
+      font-weight: 850;
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 3px;
+    }
+
+    .detail-row td {
+      padding: 0;
+      border-bottom: 0;
+      background: #fbfcff;
+    }
+
+    .detail-content {
+      max-height: 0;
+      overflow: hidden;
+      color: #526173;
+      font-size: 13px;
+      line-height: 1.55;
+      transition: max-height 240ms ease, padding 240ms ease;
+    }
+
+    .detail-row.open .detail-content {
+      max-height: 110px;
+      padding: 13px 16px 15px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .summary-item {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fbfcff;
+    }
+
+    .summary-value {
+      color: var(--ink);
+      font-size: 22px;
+      font-weight: 850;
+      letter-spacing: -0.03em;
+    }
+
+    .summary-label {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .table-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+      overflow-x: auto;
+    }
+
+    .table-card img {
+      max-width: none;
+      width: 100%;
+      min-width: 820px;
+      border-radius: 8px;
     }
 
     .analysis-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
+      grid-template-columns: 1fr;
+      gap: 18px;
     }
 
     .analysis-card {
-      padding: 24px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      background: rgba(255, 255, 255, 0.046);
-    }
-
-    .analysis-icon {
-      width: 46px;
-      height: 46px;
-      display: grid;
-      place-items: center;
-      margin-bottom: 18px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, rgba(102, 226, 255, 0.24), rgba(180, 140, 255, 0.18));
-      color: var(--blue);
-      font-family: "JetBrains Mono", monospace;
-      font-weight: 900;
-    }
-
-    .analysis-card h3 {
-      margin: 0 0 10px;
-      font-size: 21px;
-      letter-spacing: -0.035em;
-    }
-
-    .analysis-card p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.65;
-      font-size: 15px;
-    }
-
-    .open-card {
-      display: grid;
-      grid-template-columns: 0.9fr 1.1fr;
-      gap: 20px;
-      padding: 30px;
-      overflow: hidden;
-    }
-
-    .open-card h2 {
-      margin-top: 0;
-      font-size: clamp(30px, 4vw, 48px);
-    }
-
-    .open-card p {
-      color: var(--muted);
-      line-height: 1.75;
-      margin: 0 0 16px;
-    }
-
-    .design-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .design-item {
-      display: flex;
-      gap: 14px;
       padding: 16px;
       border: 1px solid var(--line);
-      border-radius: var(--radius-md);
-      background: rgba(255, 255, 255, 0.045);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
     }
 
-    .design-index {
-      flex: 0 0 34px;
-      width: 34px;
-      height: 34px;
+    .analysis-card.wide img {
+      width: 100%;
+    }
+
+    .analysis-text {
       display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: rgba(102, 226, 255, 0.14);
-      color: var(--blue);
-      font-family: "JetBrains Mono", monospace;
-      font-weight: 800;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
     }
 
-    .design-item h3 {
-      margin: 0 0 4px;
+    .analysis-point {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fbfcff;
+    }
+
+    .analysis-point h3 {
+      margin: 0 0 8px;
+      color: var(--ink);
       font-size: 16px;
     }
 
-    .design-item p {
+    .analysis-point p {
       margin: 0;
+      color: var(--muted);
       font-size: 14px;
-      line-height: 1.55;
+      line-height: 1.58;
+    }
+
+    .implementation {
+      display: grid;
+      grid-template-columns: 0.78fr 1fr;
+      gap: 0;
+    }
+
+    .implementation-copy {
+      padding: 30px;
+      background: var(--navy);
+      color: #dbeafe;
+    }
+
+    .implementation-copy h2 {
+      color: #fff;
+      text-align: left;
+    }
+
+    .implementation-copy p {
+      margin: 16px 0 0;
+      color: #c7d7f0;
+    }
+
+    .implementation-list {
+      padding: 30px;
+      background: #fff;
+    }
+
+    .implementation-list ul {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .implementation-list li {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fbfcff;
+      color: #475569;
+      font-size: 15px;
+      line-height: 1.58;
     }
 
     .bibtex {
       position: relative;
-      padding: 26px;
+      padding: 24px;
       border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      background: rgba(0, 0, 0, 0.24);
-      overflow: hidden;
+      border-radius: var(--radius);
+      background: #0f172a;
+      box-shadow: var(--shadow);
+      overflow-x: auto;
     }
 
     pre {
       margin: 0;
-      white-space: pre-wrap;
-      color: #dce7ff;
-      font-family: "JetBrains Mono", monospace;
+      color: #dbeafe;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       font-size: 13px;
       line-height: 1.7;
+      white-space: pre-wrap;
     }
 
     .copy-button {
       position: absolute;
-      top: 16px;
-      right: 16px;
-      border: 1px solid var(--line);
+      top: 14px;
+      right: 14px;
+      border: 1px solid rgba(219, 234, 254, 0.3);
       border-radius: 999px;
+      color: #dbeafe;
       background: rgba(255, 255, 255, 0.08);
-      color: var(--text);
-      padding: 9px 12px;
+      padding: 8px 12px;
       font: inherit;
       font-size: 12px;
       font-weight: 800;
@@ -907,484 +741,687 @@
     }
 
     footer {
-      padding: 44px 0 60px;
-      color: var(--subtle);
+      padding: 38px 0 54px;
+      color: var(--muted);
       text-align: center;
-      font-size: 14px;
+      font-size: 13px;
     }
 
-    .reveal {
-      opacity: 0;
-      transform: translateY(18px);
-      transition: opacity 700ms ease, transform 700ms ease;
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    @media (max-width: 980px) {
-      .hero-grid,
-      .abstract-panel,
-      .open-card {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-card {
-        min-height: auto;
-      }
-
-      .insight-card {
-        border-left: 0;
-        border-top: 1px solid var(--line);
-      }
-
-      .pipeline-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .arrow {
-        min-height: 20px;
-        transform: rotate(90deg);
-      }
-
-      .results-grid,
-      .analysis-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 720px) {
-      .page-shell {
-        width: min(100% - 24px, 1180px);
+    @media (max-width: 900px) {
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 12px 0;
       }
 
       .nav {
-        align-items: flex-start;
-        border-radius: 22px;
-        flex-direction: column;
-      }
-
-      .nav-links {
         width: 100%;
         overflow-x: auto;
         padding-bottom: 2px;
       }
 
-      .hero {
-        padding-top: 54px;
-      }
-
-      h1 {
-        letter-spacing: -0.06em;
-      }
-
-      .hero-metrics,
-      .results-grid,
-      .analysis-grid {
+      .abstract-grid,
+      .implementation,
+      .method-notes,
+      .analysis-text,
+      .summary-strip {
         grid-template-columns: 1fr;
       }
 
-      .hero-card {
-        padding: 14px;
+      .abstract-aside {
+        border-top: 1px solid var(--line);
+        border-left: 0;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        width: min(100% - 24px, 1080px);
       }
 
-      .frame {
-        width: 54px;
-        height: 76px;
+      .hero {
+        padding-top: 48px;
       }
 
-      .frame.f1 { left: 18px; }
-      .frame.f2 { left: 84px; }
-      .frame.f3 { left: 150px; }
-      .frame.f4 { left: 216px; }
-      .frame.f5 { left: 282px; }
+      .figure-card,
+      .table-card,
+      .analysis-card {
+        padding: 10px;
+        border-radius: 14px;
+      }
 
       .abstract-copy,
-      .insight-card,
-      .pipeline,
-      .open-card {
+      .abstract-aside,
+      .implementation-copy,
+      .implementation-list {
         padding: 22px;
       }
     }
   </style>
 </head>
 <body>
-  <nav class="nav page-shell" aria-label="Primary navigation">
-    <a class="brand" href="#top" aria-label="PV-VAE home">
-      <span class="brand-mark">P</span>
-      <span>PV-VAE</span>
-    </a>
-    <div class="nav-links">
-      <a href="#idea">Idea</a>
-      <a href="#method">Method</a>
-      <a href="#results">Results</a>
-      <a href="#analysis">Analysis</a>
-      <a href="#explore">Explore</a>
-      <a href="#citation">BibTeX</a>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="#top" aria-label="PV-VAE home">
+        <span class="brand-mark">PV</span>
+        <span>PV-VAE</span>
+      </a>
+      <nav class="nav" aria-label="Project sections">
+        <a href="#abstract">Abstract</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#analysis">Analysis</a>
+        <a href="#implementation">Notes</a>
+        <a href="#citation">BibTeX</a>
+      </nav>
     </div>
-  </nav>
+  </header>
 
   <main id="top">
-    <section class="hero page-shell">
-      <div class="hero-grid">
-        <div class="hero-copy reveal">
-          <div class="eyebrow"><span class="pulse-dot"></span> Video Generation with Predictive Latents</div>
-          <h1><span class="gradient-text">Predictive Video VAE</span></h1>
-          <p class="subtitle">
-            PV-VAE turns a video tokenizer into a tiny world model: encode only the observed past, ask the decoder to reconstruct the full clip, and shape latents that are easier for diffusion models to generate.
-          </p>
-          <div class="authors">
-            <strong>Yian Zhao</strong><sup>1,2</sup>, Feng Wang<sup>1,&dagger;</sup>, Qiushan Guo<sup>1</sup>, Chang Liu<sup>3</sup>, Xiangyang Ji<sup>3</sup>, Jian Zhang<sup>2</sup>, Jie Chen<sup>2</sup>
-            <div class="affiliations">
-              <sup>1</sup>ByteDance Seed &nbsp; <sup>2</sup>Peking University &nbsp; <sup>3</sup>Tsinghua University &nbsp; <sup>&dagger;</sup>Project lead
-            </div>
-          </div>
-          <div class="actions" aria-label="Project links">
-            <a class="button primary" href="./PV_VAE_Seed.pdf" target="_blank" rel="noopener">Read Paper</a>
-            <a class="button" href="#method">See Method</a>
-            <a class="button" href="#explore">Implementation Notes</a>
+    <section class="hero">
+      <div class="container">
+        <div class="venue">Technical Report, 2026</div>
+        <h1>Video Generation with Predictive Latents</h1>
+        <p class="tagline">
+          Predictive Video VAE (PV-VAE) improves latent video generation by training the tokenizer to reconstruct observed frames and predict withheld future frames.
+        </p>
+
+        <div class="authors">
+          <strong>Yian Zhao</strong><sup>1,2</sup>, Feng Wang<sup>1,&dagger;</sup>, Qiushan Guo<sup>1</sup>, Chang Liu<sup>3</sup>, Xiangyang Ji<sup>3</sup>, Jian Zhang<sup>2</sup>, Jie Chen<sup>2</sup>
+          <div class="affiliations">
+            <sup>1</sup>ByteDance Seed &nbsp; <sup>2</sup>Peking University &nbsp; <sup>3</sup>Tsinghua University &nbsp; <sup>&dagger;</sup>Project lead
           </div>
         </div>
 
-        <div class="hero-card reveal" aria-label="Predictive reconstruction illustration">
-          <div class="latent-stage">
-            <div class="latent-chip">observe &rarr; predict &rarr; diffuse</div>
-            <div class="frame observed f1" aria-hidden="true"></div>
-            <div class="frame observed f2" aria-hidden="true"></div>
-            <div class="frame observed f3" aria-hidden="true"></div>
-            <div class="frame predicted f4" aria-hidden="true"></div>
-            <div class="frame predicted f5" aria-hidden="true"></div>
-            <div class="time-track" aria-hidden="true"></div>
+        <div class="links">
+          <a class="button primary" href="./PV_VAE_Seed.pdf" target="_blank" rel="noopener">Paper PDF</a>
+          <a class="button" href="#method">Method</a>
+          <a class="button" href="#results">Results</a>
+          <span class="button disabled" title="Code cannot be released because of confidentiality constraints.">Code unavailable</span>
+        </div>
+
+        <figure class="figure-card">
+          <img src="./static/images/teaser_fig1.png" alt="PV-VAE teaser with convergence, probing, and latent space analysis">
+          <figcaption class="caption">
+            <strong>Overview.</strong> PV-VAE achieves faster convergence and better generation metrics, while latent probing and visualizations indicate stronger motion-aware representations.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="abstract">
+      <div class="container">
+        <div class="section-title">
+          <div class="kicker">Motivation</div>
+          <h2>Reconstruction quality alone does not guarantee generation quality.</h2>
+          <p class="section-lead">
+            PV-VAE studies how to make video VAE latents more suitable for diffusion, not merely more faithful for pixel reconstruction.
+          </p>
+        </div>
+
+        <div class="paper-panel abstract-grid">
+          <div class="abstract-copy">
+            <p>
+              Modern video generation models rely on video VAEs to compress visual data into compact spatiotemporal latents. However, better reconstruction metrics do not necessarily translate into better latent diffusion training.
+            </p>
+            <p>
+              PV-VAE introduces a predictive reconstruction objective: randomly discard future frames, encode only the observed past, pad the latent sequence, and decode the complete video. The decoder therefore learns to reconstruct what was seen and infer what happens next.
+            </p>
+            <p>
+              This simple objective encourages latents to encode temporal dynamics, motion priors, and smoother video trajectories, leading to stronger generation and better downstream video understanding features.
+            </p>
           </div>
-          <div class="hero-metrics">
-            <div class="metric-card">
-              <div class="value">52%</div>
-              <div class="label">faster convergence over Wan2.2 VAE on UCF101</div>
-            </div>
-            <div class="metric-card">
-              <div class="value">34.42</div>
-              <div class="label">FVD improvement on UCF101 class-conditional generation</div>
-            </div>
-            <div class="metric-card">
-              <div class="value">t4s16c64</div>
-              <div class="label">compact latent configuration for video generation</div>
-            </div>
-            <div class="metric-card">
-              <div class="value">+8.5%</div>
-              <div class="label">point tracking AUC gain from stronger diffusion features</div>
-            </div>
-          </div>
+          <aside class="abstract-aside">
+            <ul class="takeaways">
+              <li><span>1</span><div><strong>Predictive latents.</strong> The encoder sees partial context, so the latent space must carry temporally predictive structure.</div></li>
+              <li><span>2</span><div><strong>Motion-aware supervision.</strong> Temporal-difference reconstruction reduces the static-copy shortcut.</div></li>
+              <li><span>3</span><div><strong>Generation focus.</strong> The objective is designed for latent diffusability, not just reconstruction fidelity.</div></li>
+            </ul>
+          </aside>
         </div>
       </div>
     </section>
 
-    <section class="section page-shell" id="idea">
-      <div class="section-header reveal">
-        <div class="section-kicker">Core Idea</div>
-        <h2>Good reconstruction is not enough.</h2>
-        <p class="lead">
-          Video VAEs are usually optimized to reproduce pixels. PV-VAE asks a sharper question: does the latent space expose motion, dynamics, and temporal structure in a form that downstream diffusion models can learn?
-        </p>
-      </div>
-      <div class="panel abstract-panel reveal">
-        <div class="abstract-copy">
-          <p>
-            Existing video VAEs can reconstruct clips well, but further reconstruction optimization does not necessarily improve generation. PV-VAE improves the <strong>diffusability</strong> of video latents by integrating predictive learning into VAE training.
-          </p>
-          <p>
-            At each step, the encoder receives only partial past observations. The decoder must reconstruct observed frames and predict withheld future frames from padded latents. This partial-to-complete objective forces the latent space to encode temporally predictive structure instead of acting as a pixel container.
-          </p>
-          <p>
-            A motion-aware objective further emphasizes temporal differences between adjacent frames, reducing the shortcut of copying static regions and directing capacity toward structural motion.
+    <section id="method">
+      <div class="container">
+        <div class="section-title">
+          <div class="kicker">Framework</div>
+          <h2>Partial-to-complete video reconstruction.</h2>
+          <p class="section-lead">
+            The training pipeline remains close to standard video VAE training, but the encoder is restricted to observed frames while the decoder reconstructs the full sequence.
           </p>
         </div>
-        <aside class="insight-card">
-          <div class="quote-mark">"</div>
-          <h3>From what is in the frame to what happens next.</h3>
-          <p>
-            The key insight is intentionally simple and leaves a large design space: prediction target, masking schedule, padding strategy, architecture, and decoder tuning can all be explored without requiring a complex new generation pipeline.
-          </p>
-        </aside>
-      </div>
-    </section>
 
-    <section class="section page-shell" id="method">
-      <div class="section-header reveal">
-        <div class="section-kicker">Method</div>
-        <h2>Predictive reconstruction.</h2>
-        <p class="lead">
-          PV-VAE keeps the familiar encoder-decoder VAE training recipe, but changes what the encoder is allowed to see.
-        </p>
-      </div>
-      <div class="panel pipeline reveal">
-        <div class="pipeline-grid">
-          <article class="stage">
-            <div class="stage-label"><span>Step 01</span><span>Input</span></div>
-            <h3>Randomly drop future groups</h3>
-            <p>Split a video along time. Always retain the first frame, sample a dropping ratio, and hide the future groups from the encoder.</p>
-            <div class="mini-frames" aria-hidden="true">
-              <div class="mini-frame"></div>
-              <div class="mini-frame"></div>
-              <div class="mini-frame"></div>
-              <div class="mini-frame drop"></div>
-              <div class="mini-frame drop"></div>
-            </div>
+        <figure class="figure-card">
+          <img src="./static/images/framework_fig2.png" alt="PV-VAE predictive reconstruction framework from the paper">
+          <figcaption class="caption">
+            <strong>Figure 2.</strong> PV-VAE randomly discards future frames, encodes observed frames, pads latents, and decodes the complete video with reconstructive and predictive supervision.
+          </figcaption>
+        </figure>
+
+        <div class="method-notes">
+          <article class="note">
+            <h3>Training objective</h3>
+            <p>MSE, temporal-difference reconstruction, LPIPS, GAN loss, and KL regularization are used without introducing a complex auxiliary pipeline.</p>
           </article>
-          <div class="arrow" aria-hidden="true">&rarr;</div>
-          <article class="stage">
-            <div class="stage-label"><span>Step 02</span><span>Latents</span></div>
-            <h3>Pad the observed latent sequence</h3>
-            <p>Encode only observed frames, then concatenate learnable or prior-sampled padding vectors so the decoder receives a full-length latent sequence.</p>
-            <div class="latent-grid" aria-hidden="true">
-              <div class="latent-cell"></div><div class="latent-cell"></div><div class="latent-cell"></div><div class="latent-cell"></div><div class="latent-cell"></div><div class="latent-cell"></div>
-              <div class="latent-cell"></div><div class="latent-cell"></div><div class="latent-cell"></div><div class="latent-cell"></div><div class="latent-cell"></div><div class="latent-cell"></div>
-            </div>
+          <article class="note">
+            <h3>Model design</h3>
+            <p>The reported model uses 3D causal convolutions, 16x spatial compression, 4x temporal compression, and 64 latent channels.</p>
           </article>
-          <div class="arrow" aria-hidden="true">&rarr;</div>
-          <article class="stage">
-            <div class="stage-label"><span>Step 03</span><span>Decode</span></div>
-            <h3>Reconstruct and predict together</h3>
-            <p>The decoder reconstructs the whole clip, learning visual fidelity from observed frames and temporal dynamics from withheld future frames.</p>
-            <div class="decode-lines" aria-hidden="true">
-              <span></span><span></span><span></span>
-            </div>
+          <article class="note">
+            <h3>Decoder fine-tuning</h3>
+            <p>After predictive training, the encoder is frozen and the decoder is fine-tuned for standard reconstruction to reduce the training-inference gap.</p>
           </article>
         </div>
-        <div class="loss-strip" aria-label="Training losses">
-          <span class="pill">MSE</span>
-          <span class="pill">temporal diff</span>
-          <span class="pill">LPIPS</span>
-          <span class="pill">GAN</span>
-          <span class="pill">KL</span>
-          <span class="pill">decoder fine-tuning</span>
-        </div>
       </div>
     </section>
 
-    <section class="section page-shell" id="results">
-      <div class="section-header reveal">
-        <div class="section-kicker">Results</div>
-        <h2>Generation-ready latents.</h2>
-        <p class="lead">
-          Across class-conditional and unconditional generation, PV-VAE improves video generation quality while preserving competitive reconstruction and practical inference efficiency.
-        </p>
-      </div>
-      <div class="results-grid reveal">
-        <article class="result-card">
-          <div class="metric">146.37</div>
-          <h3>UCF101 FVD</h3>
-          <p>Best overall FVD among compared video VAEs under the Latte generation setup.</p>
-        </article>
-        <article class="result-card">
-          <div class="metric">72.50</div>
-          <h3>RealEstate10K FVD</h3>
-          <p>Consistent gain in unconditional generation, suggesting better transferable video latents.</p>
-        </article>
-        <article class="result-card">
-          <div class="metric">69.72</div>
-          <h3>UCF101 IS</h3>
-          <p>Higher Inception Score with a high-compression t4s16c64 latent configuration.</p>
-        </article>
-        <article class="result-card">
-          <div class="metric">0.69</div>
-          <h3>VAE inference speed</h3>
-          <p>Faster than Wan2.2 VAE and Hunyuan-VAE in the reported 17-frame 256 x 256 setting.</p>
-        </article>
-      </div>
-      <div class="comparison reveal">
-        <table aria-label="Generation performance comparison">
-          <thead>
-            <tr>
-              <th>Method</th>
-              <th>Latent config</th>
-              <th>UCF101 FVD</th>
-              <th>UCF101 IS</th>
-              <th>RealEstate10K FVD</th>
-              <th>Train mem</th>
-              <th>Params</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="method-name">Hunyuan-VAE</td>
-              <td>t4s8c16</td>
-              <td>210.30</td>
-              <td>66.40</td>
-              <td>83.45</td>
-              <td>87.36 GiB</td>
-              <td>246M</td>
-            </tr>
-            <tr>
-              <td class="method-name">Wan2.2 VAE</td>
-              <td>t4s16c48</td>
-              <td>180.79</td>
-              <td>67.32</td>
-              <td>87.15</td>
-              <td>30.90 GiB</td>
-              <td>705M</td>
-            </tr>
-            <tr>
-              <td class="method-name">SSVAE</td>
-              <td>t4s16c48</td>
-              <td>168.68</td>
-              <td>66.39</td>
-              <td>79.08</td>
-              <td>34.00 GiB</td>
-              <td>315M</td>
-            </tr>
-            <tr>
-              <td class="method-name">PV-VAE</td>
-              <td>t4s16c64</td>
-              <td class="best">146.37</td>
-              <td class="best">69.72</td>
-              <td class="best">72.50</td>
-              <td>33.34 GiB</td>
-              <td>661M</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="section page-shell" id="analysis">
-      <div class="section-header reveal">
-        <div class="section-kicker">Why It Works</div>
-        <h2>The latent space starts to understand motion.</h2>
-        <p class="lead">
-          PV-VAE is diagnosed beyond aggregate generation metrics: latent PCA, temporal distance, prediction accuracy, and diffusion-feature probing all point to stronger temporal structure.
-        </p>
-      </div>
-      <div class="analysis-grid reveal">
-        <article class="analysis-card">
-          <div class="analysis-icon">PCA</div>
-          <h3>Motion-aware latent activations</h3>
-          <p>Principal components align with optical flow: dynamic foregrounds become clearer while static backgrounds carry less noisy activation.</p>
-        </article>
-        <article class="analysis-card">
-          <div class="analysis-icon">LTD</div>
-          <h3>Smoother temporal trajectory</h3>
-          <p>Adjacent-frame latent distances become lower and sharper, while long-range distances grow monotonically with frame interval.</p>
-        </article>
-        <article class="analysis-card">
-          <div class="analysis-icon">PR</div>
-          <h3>Prediction correlates with generation</h3>
-          <p>Better future-frame prediction tracks better video generation, supporting predictive reconstruction as a useful latent constraint.</p>
-        </article>
-        <article class="analysis-card">
-          <div class="analysis-icon">Flow</div>
-          <h3>Optical flow probing</h3>
-          <p>Diffusion features learned on PV-VAE latents reduce endpoint error from 5.9223 to 5.1805.</p>
-        </article>
-        <article class="analysis-card">
-          <div class="analysis-icon">Next</div>
-          <h3>Next-frame prediction</h3>
-          <p>Feature probing improves MSE from 0.0314 to 0.0289, indicating stronger short-horizon dynamics.</p>
-        </article>
-        <article class="analysis-card">
-          <div class="analysis-icon">Track</div>
-          <h3>Point tracking</h3>
-          <p>Tracking AUC rises from 70.95 to 76.99, showing more useful motion representations for downstream understanding.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section page-shell" id="explore">
-      <div class="panel open-card reveal">
-        <div>
-          <div class="section-kicker">Implementation Notes</div>
-          <h2>Simple insight, open design space.</h2>
-          <p>
-            The production code cannot be released because of confidentiality constraints, but the method is deliberately lightweight: partial observation, latent padding, full-sequence reconstruction, and motion-aware supervision.
-          </p>
-          <p>
-            This makes PV-VAE more of a research direction than a locked recipe. The paper provides enough implementation detail for researchers to explore variants inside their own VAE and latent diffusion pipelines.
+    <section id="results">
+      <div class="container">
+        <div class="section-title">
+          <div class="kicker">Experimental Results</div>
+          <h2>Direct comparison with existing video VAEs.</h2>
+          <p class="section-lead">
+            Click the tabs to switch between generation and reconstruction settings, and click each method row for a short interpretation.
           </p>
         </div>
-        <div class="design-list">
-          <div class="design-item">
-            <div class="design-index">01</div>
-            <div>
-              <h3>Prediction schedule</h3>
-              <p>Vary maximum dropping ratio, temporal grouping, or replace suffix prediction with frame infilling.</p>
+
+        <div class="result-board">
+          <div class="result-tabs" role="tablist" aria-label="Result tables">
+            <button class="result-tab active" type="button" role="tab" aria-selected="true" data-result-tab="generation">Generation</button>
+            <button class="result-tab" type="button" role="tab" aria-selected="false" data-result-tab="reconstruction">Reconstruction</button>
+          </div>
+
+          <div class="result-panel active" id="generation-panel" role="tabpanel" data-result-panel="generation">
+            <p class="table-note">
+              <span><strong>Generation performance.</strong> 17-frame 256 x 256 videos. Lower FVD/KVD is better; higher IS is better.</span>
+              <span>Best in green, second-best in blue underline.</span>
+            </p>
+            <div class="table-scroll">
+              <table class="metric-table" aria-label="Generation comparison on UCF101 and RealEstate10K">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>Latent config</th>
+                    <th>UCF101 FVD ↓</th>
+                    <th>UCF101 KVD ↓</th>
+                    <th>UCF101 IS ↑</th>
+                    <th>RE10K FVD ↓</th>
+                    <th>RE10K KVD ↓</th>
+                    <th>Train speed ↑</th>
+                    <th>Train mem ↓</th>
+                    <th>Params</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="method-row" tabindex="0">
+                    <td class="method">CogX-VAE</td>
+                    <td class="config">t4s8c16</td>
+                    <td>176.90</td>
+                    <td>16.47</td>
+                    <td>64.19</td>
+                    <td>94.12</td>
+                    <td>10.41</td>
+                    <td>0.76</td>
+                    <td>85.93</td>
+                    <td>216M</td>
+                  </tr>
+                  <tr class="detail-row"><td colspan="10"><div class="detail-content">A strong public video VAE baseline, but the low-compression latent is expensive for training the downstream generator.</div></td></tr>
+
+                  <tr class="method-row" tabindex="0">
+                    <td class="method">IV-VAE</td>
+                    <td class="config">t4s8c16</td>
+                    <td>175.74</td>
+                    <td>22.32</td>
+                    <td>64.51</td>
+                    <td>92.37</td>
+                    <td class="second">8.35</td>
+                    <td>1.28</td>
+                    <td>88.34</td>
+                    <td>242M</td>
+                  </tr>
+                  <tr class="detail-row"><td colspan="10"><div class="detail-content">Improves some unconditional generation metrics, but still trails PV-VAE on the main FVD comparisons.</div></td></tr>
+
+                  <tr class="method-row" tabindex="0">
+                    <td class="method">WF-VAE-L</td>
+                    <td class="config">t4s8c16</td>
+                    <td>188.19</td>
+                    <td>33.01</td>
+                    <td class="second">67.49</td>
+                    <td>107.26</td>
+                    <td>12.56</td>
+                    <td>2.52</td>
+                    <td>87.36</td>
+                    <td>317M</td>
+                  </tr>
+                  <tr class="detail-row"><td colspan="10"><div class="detail-content">Wavelet-driven design is efficient, yet its generation quality is weaker in the reported Latte setup.</div></td></tr>
+
+                  <tr class="method-row" tabindex="0">
+                    <td class="method">Hunyuan-VAE</td>
+                    <td class="config">t4s8c16</td>
+                    <td>210.30</td>
+                    <td>52.81</td>
+                    <td>66.40</td>
+                    <td>83.45</td>
+                    <td>13.23</td>
+                    <td>1.64</td>
+                    <td>87.36</td>
+                    <td>246M</td>
+                  </tr>
+                  <tr class="detail-row"><td colspan="10"><div class="detail-content">Reconstruction-oriented quality does not directly translate into stronger generation in this comparison.</div></td></tr>
+
+                  <tr class="method-row" tabindex="0">
+                    <td class="method">Wan2.1 VAE</td>
+                    <td class="config">t4s8c16</td>
+                    <td class="second">167.10</td>
+                    <td class="best">11.54</td>
+                    <td>66.04</td>
+                    <td>83.84</td>
+                    <td>10.64</td>
+                    <td>1.88</td>
+                    <td>86.44</td>
+                    <td>127M</td>
+                  </tr>
+                  <tr class="detail-row"><td colspan="10"><div class="detail-content">A compact and competitive baseline; PV-VAE still improves the main FVD and IS metrics.</div></td></tr>
+
+                  <tr class="method-row" tabindex="0">
+                    <td class="method">Wan2.2 VAE</td>
+                    <td class="config">t4s16c48</td>
+                    <td>180.79</td>
+                    <td>17.80</td>
+                    <td>67.32</td>
+                    <td>87.15</td>
+                    <td>10.11</td>
+                    <td class="best">4.96</td>
+                    <td class="best">30.90</td>
+                    <td>705M</td>
+                  </tr>
+                  <tr class="detail-row"><td colspan="10"><div class="detail-content">PV-VAE improves UCF101 FVD by 34.42 while keeping comparable high-compression efficiency.</div></td></tr>
+
+                  <tr class="method-row" tabindex="0">
+                    <td class="method">SSVAE</td>
+                    <td class="config">t4s16c48</td>
+                    <td>168.68</td>
+                    <td>19.71</td>
+                    <td>66.39</td>
+                    <td class="second">79.08</td>
+                    <td>8.79</td>
+                    <td>3.92</td>
+                    <td>34.00</td>
+                    <td>315M</td>
+                  </tr>
+                  <tr class="detail-row"><td colspan="10"><div class="detail-content">Spectral constraints help diffusability, while predictive reconstruction gives a stronger overall generation result.</div></td></tr>
+
+                  <tr class="method-row pvvae active" tabindex="0">
+                    <td class="method">PV-VAE</td>
+                    <td class="config">t4s16c64</td>
+                    <td class="best">146.37</td>
+                    <td class="second">14.52</td>
+                    <td class="best">69.72</td>
+                    <td class="best">72.50</td>
+                    <td class="best">4.06</td>
+                    <td>4.40</td>
+                    <td>33.34</td>
+                    <td>661M</td>
+                  </tr>
+                  <tr class="detail-row open"><td colspan="10"><div class="detail-content">PV-VAE achieves the best overall generation quality, supporting the paper's claim that predictive latent structure improves downstream diffusion training.</div></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="summary-strip" aria-label="Generation highlights">
+              <div class="summary-item">
+                <div class="summary-value">146.37</div>
+                <div class="summary-label">Best UCF101 FVD among compared methods.</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-value">72.50</div>
+                <div class="summary-label">Best RealEstate10K FVD in unconditional generation.</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-value">69.72</div>
+                <div class="summary-label">Best UCF101 Inception Score.</div>
+              </div>
             </div>
           </div>
-          <div class="design-item">
-            <div class="design-index">02</div>
-            <div>
-              <h3>Latent padding</h3>
-              <p>Compare Gaussian, learnable, masked-token, or condition-aware padding strategies.</p>
+
+          <div class="result-panel" id="reconstruction-panel" role="tabpanel" data-result-panel="reconstruction">
+            <p class="table-note">
+              <span><strong>Reconstruction performance.</strong> Kinetics-400 validation videos at 17 x 256 x 256 and 17 x 512 x 512.</span>
+              <span>PV-VAE remains competitive while prioritizing generation-ready latents.</span>
+            </p>
+            <div class="table-scroll">
+              <table class="metric-table" aria-label="Reconstruction comparison on Kinetics-400">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>Config family</th>
+                    <th>256 rFVD ↓</th>
+                    <th>256 PSNR ↑</th>
+                    <th>256 SSIM ↑</th>
+                    <th>256 LPIPS ↓</th>
+                    <th>512 rFVD ↓</th>
+                    <th>512 PSNR ↑</th>
+                    <th>512 SSIM ↑</th>
+                    <th>512 LPIPS ↓</th>
+                    <th>Infer speed ↑</th>
+                    <th>Infer mem ↓</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="method-row" tabindex="0">
+                    <td class="method">CogX-VAE</td>
+                    <td class="config">t4s8c16</td>
+                    <td>4.90</td>
+                    <td>33.78</td>
+                    <td class="best">0.97</td>
+                    <td>0.027</td>
+                    <td>1.79</td>
+                    <td>36.00</td>
+                    <td class="best">0.99</td>
+                    <td>0.024</td>
+                    <td>0.46</td>
+                    <td>13.64</td>
+                  </tr>
+                  <tr class="detail-row"><td colspan="12"><div class="detail-content">Strong high-resolution SSIM, but with higher inference memory than PV-VAE.</div></td></tr>
+
+                  <tr class="method-row" tabindex="0">
+                    <td class="method">IV-VAE</td>
+                    <td class="config">t4s8c16</td>
+                    <td class="best">2.78</td>
+                    <td>34.08</td>
+                    <td>0.96</td>
+                    <td>0.019</td>
+                    <td class="second">0.97</td>
+                    <td class="best">37.24</td>
+                    <td>0.96</td>
+                    <td class="second">0.016</td>
+                    <td>0.32</td>
+                    <td class="second">5.39</td>
+                  </tr>
+                  <tr class="detail-row"><td colspan="12"><div class="detail-content">Excellent reconstruction metrics under lower compression, but not the strongest generation result.</div></td></tr>
+
+                  <tr class="method-row" tabindex="0">
+                    <td class="method">WF-VAE-L</td>
+                    <td class="config">t4s8c16</td>
+                    <td>3.06</td>
+                    <td>33.48</td>
+                    <td>0.96</td>
+                    <td>0.023</td>
+                    <td>1.08</td>
+                    <td>35.93</td>
+                    <td>0.96</td>
+                    <td>0.023</td>
+                    <td class="best">0.87</td>
+                    <td class="best">5.00</td>
+                  </tr>
+                  <tr class="detail-row"><td colspan="12"><div class="detail-content">Fast and memory-efficient, with weaker generation quality in Table 1.</div></td></tr>
+
+                  <tr class="method-row" tabindex="0">
+                    <td class="method">Hunyuan-VAE</td>
+                    <td class="config">t4s8c16</td>
+                    <td>2.96</td>
+                    <td class="best">34.30</td>
+                    <td class="best">0.97</td>
+                    <td class="second">0.016</td>
+                    <td class="best">0.90</td>
+                    <td>37.13</td>
+                    <td class="second">0.97</td>
+                    <td class="best">0.015</td>
+                    <td>0.50</td>
+                    <td>22.00</td>
+                  </tr>
+                  <tr class="detail-row"><td colspan="12"><div class="detail-content">Very strong reconstruction, but the paper shows that reconstruction strength alone does not ensure generation strength.</div></td></tr>
+
+                  <tr class="method-row" tabindex="0">
+                    <td class="method">Wan2.1 VAE</td>
+                    <td class="config">t4s8c16</td>
+                    <td>2.92</td>
+                    <td>33.21</td>
+                    <td>0.95</td>
+                    <td>0.018</td>
+                    <td>1.02</td>
+                    <td>36.15</td>
+                    <td class="second">0.97</td>
+                    <td>0.017</td>
+                    <td>0.60</td>
+                    <td>6.77</td>
+                  </tr>
+                  <tr class="detail-row"><td colspan="12"><div class="detail-content">A compact baseline with solid reconstruction and generation, but less temporal predictive structure.</div></td></tr>
+
+                  <tr class="method-row" tabindex="0">
+                    <td class="method">Wan2.2 VAE</td>
+                    <td class="config">t4s16c48</td>
+                    <td>3.42</td>
+                    <td>33.78</td>
+                    <td>0.96</td>
+                    <td class="best">0.015</td>
+                    <td>1.22</td>
+                    <td>36.75</td>
+                    <td class="second">0.97</td>
+                    <td class="best">0.015</td>
+                    <td>0.58</td>
+                    <td>9.36</td>
+                  </tr>
+                  <tr class="detail-row"><td colspan="12"><div class="detail-content">PV-VAE is slightly behind on some reconstruction metrics but substantially ahead on generation FVD.</div></td></tr>
+
+                  <tr class="method-row" tabindex="0">
+                    <td class="method">SSVAE</td>
+                    <td class="config">t4s16c48</td>
+                    <td>7.50</td>
+                    <td>31.18</td>
+                    <td>0.96</td>
+                    <td>0.036</td>
+                    <td>2.16</td>
+                    <td>34.45</td>
+                    <td class="second">0.97</td>
+                    <td>0.028</td>
+                    <td>0.64</td>
+                    <td>7.63</td>
+                  </tr>
+                  <tr class="detail-row"><td colspan="12"><div class="detail-content">Spectral regularization improves diffusability but sacrifices reconstruction more noticeably.</div></td></tr>
+
+                  <tr class="method-row pvvae active" tabindex="0">
+                    <td class="method">PV-VAE</td>
+                    <td class="config">t4s16c64</td>
+                    <td>3.45</td>
+                    <td>32.26</td>
+                    <td>0.95</td>
+                    <td>0.020</td>
+                    <td>1.88</td>
+                    <td>35.03</td>
+                    <td class="second">0.97</td>
+                    <td>0.020</td>
+                    <td class="second">0.69</td>
+                    <td>7.97</td>
+                  </tr>
+                  <tr class="detail-row open"><td colspan="12"><div class="detail-content">PV-VAE keeps reconstruction competitive after decoder fine-tuning, while the generation table shows the main advantage of predictive latents.</div></td></tr>
+                </tbody>
+              </table>
             </div>
-          </div>
-          <div class="design-item">
-            <div class="design-index">03</div>
-            <div>
-              <h3>Architecture</h3>
-              <p>Move beyond 3D causal CNNs and revisit Transformer video VAEs with predictive objectives.</p>
-            </div>
-          </div>
-          <div class="design-item">
-            <div class="design-index">04</div>
-            <div>
-              <h3>Training stages</h3>
-              <p>Freeze the encoder for decoder fine-tuning to recover reconstruction while preserving latent diffusability.</p>
+            <div class="summary-strip" aria-label="Reconstruction highlights">
+              <div class="summary-item">
+                <div class="summary-value">3.45</div>
+                <div class="summary-label">256-resolution rFVD after decoder fine-tuning.</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-value">0.69</div>
+                <div class="summary-label">Inference speed, faster than Wan2.2 VAE in the reported setting.</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-value">7.97</div>
+                <div class="summary-label">Inference memory, lower than Wan2.2 VAE and Hunyuan-VAE.</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section page-shell" id="citation">
-      <div class="section-header reveal">
-        <div class="section-kicker">Citation</div>
-        <h2>BibTeX</h2>
-        <p class="lead">Please cite the paper if you find the idea useful for video VAE or latent video diffusion research.</p>
+    <section id="analysis">
+      <div class="container">
+        <div class="section-title">
+          <div class="kicker">Analysis</div>
+          <h2>Predictive reconstruction makes latents more motion-aware.</h2>
+          <p class="section-lead">
+            The page now keeps the visual evidence from the paper: PCA/optical-flow alignment, correlation and scaling curves, temporal coherence, prediction validation, and downstream probing.
+          </p>
+        </div>
+
+        <div class="analysis-grid">
+          <figure class="analysis-card wide">
+            <img src="./static/images/pca_fig4.png" alt="PCA analysis comparing RGB, baseline, PV-VAE, and optical flow">
+            <figcaption class="caption">
+              <strong>Latent PCA and optical flow.</strong> PV-VAE activations align more clearly with moving foreground regions and underlying video dynamics.
+            </figcaption>
+          </figure>
+
+          <figure class="analysis-card wide">
+            <img src="./static/images/analysis_fig5.png" alt="PV-VAE correlation, scaling, and temporal coherence analysis">
+            <figcaption class="caption">
+              <strong>Predictive accuracy, scalability, and temporal coherence.</strong> Better prediction correlates with stronger generation, and predictive reconstruction scales better than pure reconstruction.
+            </figcaption>
+          </figure>
+
+          <figure class="analysis-card wide">
+            <img src="./static/images/prediction_fig6.png" alt="PV-VAE frame prediction validation">
+            <figcaption class="caption">
+              <strong>Frame prediction validation.</strong> PV-VAE generates plausible withheld future frames conditioned on observed frames.
+            </figcaption>
+          </figure>
+
+          <figure class="table-card">
+            <img src="./static/images/probing_table3.png" alt="Video understanding probing table">
+            <figcaption class="caption">
+              <strong>Diffusion-feature probing.</strong> Predictive reconstruction improves optical flow estimation, next-frame prediction, and point tracking.
+            </figcaption>
+          </figure>
+        </div>
+
+        <div class="analysis-text">
+          <article class="analysis-point">
+            <h3>Motion structure</h3>
+            <p>PCA visualizations show that PV-VAE allocates more representational capacity to dynamic foregrounds.</p>
+          </article>
+          <article class="analysis-point">
+            <h3>Temporal trajectory</h3>
+            <p>Latent temporal distance becomes smoother for adjacent frames and more monotonic across longer intervals.</p>
+          </article>
+          <article class="analysis-point">
+            <h3>Downstream features</h3>
+            <p>LVDM features trained on PV-VAE latents improve across optical flow, next-frame prediction, and tracking probes.</p>
+          </article>
+        </div>
       </div>
-      <div class="bibtex reveal">
-        <button class="copy-button" type="button" data-copy>Copy</button>
-        <pre id="bibtex">@article{zhao2026pvvae,
+    </section>
+
+    <section id="implementation">
+      <div class="container">
+        <div class="paper-panel implementation">
+          <div class="implementation-copy">
+            <div class="kicker">Implementation Notes</div>
+            <h2>Code is not open-sourced, but the design is intentionally simple.</h2>
+            <p>
+              Due to confidentiality constraints, we cannot release the production code. The core insight and implementation route, however, are lightweight enough to be reproduced and extended in existing video VAE pipelines.
+            </p>
+          </div>
+          <div class="implementation-list">
+            <ul>
+              <li><strong>Prediction schedule:</strong> vary the dropping ratio, temporal grouping, suffix prediction, or frame infilling strategy.</li>
+              <li><strong>Padding strategy:</strong> compare learnable tokens, Gaussian padding, or condition-aware padding for withheld latent groups.</li>
+              <li><strong>Architecture:</strong> explore CNN, Transformer, or hybrid video VAEs under the same predictive reconstruction objective.</li>
+              <li><strong>Training recipe:</strong> preserve latent diffusability by freezing the encoder during decoder fine-tuning.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="citation">
+      <div class="container">
+        <div class="section-title">
+          <div class="kicker">Citation</div>
+          <h2>BibTeX</h2>
+        </div>
+        <div class="bibtex">
+          <button class="copy-button" type="button" data-copy>Copy</button>
+          <pre id="bibtex">@article{zhao2026pvvae,
   title   = {Video Generation with Predictive Latents},
   author  = {Zhao, Yian and Wang, Feng and Guo, Qiushan and Liu, Chang and Ji, Xiangyang and Zhang, Jian and Chen, Jie},
   year    = {2026},
   note    = {Technical report}
 }</pre>
+        </div>
       </div>
     </section>
   </main>
 
-  <footer class="page-shell">
-    Built for PV-VAE. Template and styling are self-contained for easy GitHub Pages deployment.
+  <footer class="container">
+    PV-VAE project page. Figure and table images are cropped from the paper PDF.
   </footer>
 
   <script>
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-        }
-      });
-    }, { threshold: 0.12 });
-
-    document.querySelectorAll(".reveal").forEach((element) => {
-      revealObserver.observe(element);
-    });
-
+    const links = [...document.querySelectorAll(".nav a")];
     const sections = [...document.querySelectorAll("main section[id]")];
-    const navLinks = [...document.querySelectorAll(".nav-links a")];
 
-    const navObserver = new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) {
           return;
         }
-        navLinks.forEach((link) => {
+        links.forEach((link) => {
           link.classList.toggle("active", link.getAttribute("href") === `#${entry.target.id}`);
         });
       });
-    }, { rootMargin: "-35% 0px -55% 0px", threshold: 0.01 });
+    }, { rootMargin: "-38% 0px -54% 0px", threshold: 0.01 });
 
-    sections.forEach((section) => navObserver.observe(section));
+    sections.forEach((section) => observer.observe(section));
+
+    const resultTabs = [...document.querySelectorAll("[data-result-tab]")];
+    const resultPanels = [...document.querySelectorAll("[data-result-panel]")];
+
+    resultTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const target = tab.dataset.resultTab;
+        resultTabs.forEach((item) => {
+          const active = item === tab;
+          item.classList.toggle("active", active);
+          item.setAttribute("aria-selected", String(active));
+        });
+        resultPanels.forEach((panel) => {
+          panel.classList.toggle("active", panel.dataset.resultPanel === target);
+        });
+      });
+    });
+
+    const toggleRow = (row) => {
+      const detail = row.nextElementSibling;
+      if (!detail || !detail.classList.contains("detail-row")) {
+        return;
+      }
+      const tbody = row.closest("tbody");
+      tbody.querySelectorAll(".method-row.active").forEach((activeRow) => {
+        if (activeRow !== row) {
+          activeRow.classList.remove("active");
+        }
+      });
+      tbody.querySelectorAll(".detail-row.open").forEach((openRow) => {
+        if (openRow !== detail) {
+          openRow.classList.remove("open");
+        }
+      });
+      row.classList.toggle("active");
+      detail.classList.toggle("open");
+    };
+
+    document.querySelectorAll(".method-row").forEach((row) => {
+      row.addEventListener("click", () => toggleRow(row));
+      row.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          toggleRow(row);
+        }
+      });
+    });
 
     const copyButton = document.querySelector("[data-copy]");
     const bibtex = document.querySelector("#bibtex");
@@ -1392,9 +1429,9 @@
     copyButton.addEventListener("click", async () => {
       await navigator.clipboard.writeText(bibtex.textContent);
       copyButton.textContent = "Copied";
-      window.setTimeout(() => {
+      setTimeout(() => {
         copyButton.textContent = "Copy";
-      }, 1400);
+      }, 1200);
     });
   </script>
 </body>
