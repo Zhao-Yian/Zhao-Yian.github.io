@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="PV-VAE: Video Generation with Predictive Latents">
+  <meta name="keywords" content="PV-VAE, Predictive Video VAE, video generation, latent diffusion, video VAE, predictive reconstruction">
+  <meta name="author" content="Yian Zhao">
+  <title>PV-VAE: Video Generation with Predictive Latents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #060813;
+      --bg-soft: #0b1024;
+      --panel: rgba(16, 24, 48, 0.72);
+      --panel-strong: rgba(22, 32, 64, 0.92);
+      --line: rgba(159, 181, 255, 0.18);
+      --line-strong: rgba(159, 181, 255, 0.34);
+      --text: #f4f7ff;
+      --muted: #a9b4d0;
+      --subtle: #77829e;
+      --blue: #66e2ff;
+      --violet: #b48cff;
+      --pink: #ff72b6;
+      --green: #73f2b4;
+      --amber: #ffd37a;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+      --radius-xl: 30px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(102, 226, 255, 0.18), transparent 32rem),
+        radial-gradient(circle at 88% 0%, rgba(180, 140, 255, 0.22), transparent 34rem),
+        radial-gradient(circle at 52% 66%, rgba(255, 114, 182, 0.12), transparent 34rem),
+        linear-gradient(180deg, #050711 0%, #070b18 52%, #050711 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent 78%);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.08), transparent 42rem);
+      mix-blend-mode: screen;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page-shell {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 14px;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(6, 8, 19, 0.72);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.22);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--violet) 55%, var(--pink));
+      color: #06101e;
+      font-weight: 900;
+      box-shadow: 0 0 34px rgba(102, 226, 255, 0.35);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .nav-links a {
+      padding: 10px 12px;
+      border-radius: 999px;
+      transition: color 180ms ease, background 180ms ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .hero {
+      position: relative;
+      padding: 92px 0 54px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 0.74fr);
+      gap: 34px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 12px;
+      border: 1px solid rgba(102, 226, 255, 0.25);
+      border-radius: 999px;
+      background: rgba(102, 226, 255, 0.08);
+      color: #cbf7ff;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .pulse-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 0 rgba(115, 242, 180, 0.7);
+      animation: pulse 2.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(115, 242, 180, 0.6); }
+      70% { box-shadow: 0 0 0 12px rgba(115, 242, 180, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(115, 242, 180, 0); }
+    }
+
+    h1 {
+      max-width: 850px;
+      margin: 24px 0 16px;
+      font-size: clamp(48px, 7.4vw, 96px);
+      line-height: 0.9;
+      letter-spacing: -0.08em;
+      text-wrap: balance;
+    }
+
+    .gradient-text {
+      background: linear-gradient(110deg, #ffffff 10%, #8feaff 40%, #c9a8ff 66%, #ff91c9 92%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.7;
+    }
+
+    .authors {
+      margin-top: 26px;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    .authors strong {
+      color: var(--text);
+    }
+
+    .affiliations {
+      color: var(--subtle);
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 0 18px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      font-weight: 800;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      border-color: rgba(102, 226, 255, 0.65);
+      background: rgba(102, 226, 255, 0.14);
+    }
+
+    .button.primary {
+      color: #04131c;
+      background: linear-gradient(135deg, var(--blue), var(--green));
+      border-color: transparent;
+    }
+
+    .button.disabled {
+      opacity: 0.58;
+      pointer-events: none;
+    }
+
+    .hero-card {
+      position: relative;
+      min-height: 530px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, rgba(16, 24, 48, 0.76), rgba(10, 14, 31, 0.62));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(from 80deg, transparent, rgba(102, 226, 255, 0.16), transparent, rgba(180, 140, 255, 0.16), transparent);
+      animation: slow-spin 14s linear infinite;
+      z-index: -2;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      border-radius: calc(var(--radius-xl) - 1px);
+      background: linear-gradient(180deg, rgba(8, 12, 28, 0.88), rgba(8, 10, 22, 0.94));
+      z-index: -1;
+    }
+
+    @keyframes slow-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .latent-stage {
+      position: relative;
+      height: 292px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 24% 28%, rgba(102, 226, 255, 0.16), transparent 15rem),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .time-track {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 28px;
+      height: 5px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--blue), var(--violet), rgba(255, 114, 182, 0.25));
+    }
+
+    .time-track::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -2px;
+      width: 12px;
+      height: 12px;
+      border-top: 3px solid rgba(255, 255, 255, 0.82);
+      border-right: 3px solid rgba(255, 255, 255, 0.82);
+      transform: translateY(-50%) rotate(45deg);
+    }
+
+    .frame {
+      position: absolute;
+      width: 70px;
+      height: 92px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 45%),
+        linear-gradient(160deg, rgba(102, 226, 255, 0.24), rgba(180, 140, 255, 0.18));
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.22);
+      animation: drift 5s ease-in-out infinite;
+    }
+
+    .frame::before,
+    .frame::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .frame::before {
+      width: 24px;
+      height: 7px;
+      left: 16px;
+      top: 20px;
+    }
+
+    .frame::after {
+      width: 32px;
+      height: 32px;
+      right: 12px;
+      bottom: 14px;
+      background: radial-gradient(circle at 35% 35%, #fff, rgba(115, 242, 180, 0.9) 45%, rgba(115, 242, 180, 0.08) 70%);
+    }
+
+    .frame.observed {
+      top: 54px;
+    }
+
+    .frame.predicted {
+      top: 70px;
+      border-style: dashed;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 45%),
+        linear-gradient(160deg, rgba(255, 114, 182, 0.16), rgba(180, 140, 255, 0.1));
+      opacity: 0.66;
+    }
+
+    .frame.f1 { left: 28px; animation-delay: 0s; }
+    .frame.f2 { left: 116px; animation-delay: 0.4s; }
+    .frame.f3 { left: 204px; animation-delay: 0.8s; }
+    .frame.f4 { left: 292px; animation-delay: 1.2s; }
+    .frame.f5 { left: 380px; animation-delay: 1.6s; }
+
+    @keyframes drift {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-10px) rotate(1deg); }
+    }
+
+    .latent-chip {
+      position: absolute;
+      left: 28px;
+      top: 24px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.26);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #d9e4ff;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .metric-card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.055);
+    }
+
+    .metric-card .value {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .metric-card .label {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .section {
+      padding: 70px 0;
+    }
+
+    .section-header {
+      max-width: 760px;
+      margin-bottom: 28px;
+    }
+
+    .section-kicker {
+      color: var(--blue);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 10px 0 12px;
+      font-size: clamp(32px, 4.8vw, 56px);
+      line-height: 1;
+      letter-spacing: -0.055em;
+    }
+
+    .lead {
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.75;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .abstract-panel {
+      display: grid;
+      grid-template-columns: 1fr 0.68fr;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    .abstract-copy {
+      padding: 34px;
+    }
+
+    .abstract-copy p {
+      margin: 0 0 18px;
+      color: #cbd5f0;
+      font-size: 17px;
+      line-height: 1.78;
+    }
+
+    .abstract-copy p:last-child {
+      margin-bottom: 0;
+    }
+
+    .insight-card {
+      position: relative;
+      padding: 34px;
+      min-height: 100%;
+      border-left: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 100% 0%, rgba(180, 140, 255, 0.22), transparent 18rem),
+        rgba(255, 255, 255, 0.04);
+    }
+
+    .quote-mark {
+      font-family: "JetBrains Mono", monospace;
+      color: rgba(102, 226, 255, 0.65);
+      font-size: 62px;
+      line-height: 0.8;
+    }
+
+    .insight-card h3 {
+      margin: 10px 0 12px;
+      font-size: 25px;
+      line-height: 1.12;
+      letter-spacing: -0.04em;
+    }
+
+    .insight-card p {
+      color: var(--muted);
+      line-height: 1.72;
+      margin: 0;
+    }
+
+    .pipeline {
+      padding: 28px;
+      overflow: hidden;
+    }
+
+    .pipeline-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .stage {
+      min-height: 210px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .stage-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      color: var(--subtle);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .stage h3 {
+      margin: 18px 0 10px;
+      font-size: 22px;
+      letter-spacing: -0.04em;
+    }
+
+    .stage p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.62;
+      font-size: 15px;
+    }
+
+    .arrow {
+      display: grid;
+      place-items: center;
+      color: var(--blue);
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    .mini-frames {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .mini-frame {
+      height: 54px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, rgba(102, 226, 255, 0.32), rgba(180, 140, 255, 0.16));
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .mini-frame.drop {
+      background: rgba(255, 255, 255, 0.04);
+      border-style: dashed;
+      opacity: 0.72;
+    }
+
+    .latent-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin-top: 20px;
+    }
+
+    .latent-cell {
+      aspect-ratio: 1;
+      border-radius: 9px;
+      background: linear-gradient(135deg, rgba(102, 226, 255, 0.34), rgba(180, 140, 255, 0.18));
+      animation: cell-glow 2.8s ease-in-out infinite;
+    }
+
+    .latent-cell:nth-child(3n) {
+      background: linear-gradient(135deg, rgba(115, 242, 180, 0.34), rgba(102, 226, 255, 0.16));
+      animation-delay: 0.5s;
+    }
+
+    .latent-cell:nth-child(4n) {
+      background: linear-gradient(135deg, rgba(255, 114, 182, 0.28), rgba(180, 140, 255, 0.16));
+      animation-delay: 1s;
+    }
+
+    @keyframes cell-glow {
+      0%, 100% { opacity: 0.58; transform: scale(0.96); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+
+    .decode-lines {
+      position: relative;
+      height: 72px;
+      margin-top: 24px;
+      overflow: hidden;
+      border-radius: 14px;
+      background: rgba(0, 0, 0, 0.18);
+    }
+
+    .decode-lines span {
+      position: absolute;
+      left: -30%;
+      width: 60%;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      animation: scan 2.6s linear infinite;
+    }
+
+    .decode-lines span:nth-child(1) { top: 18px; }
+    .decode-lines span:nth-child(2) { top: 36px; animation-delay: 0.45s; }
+    .decode-lines span:nth-child(3) { top: 54px; animation-delay: 0.9s; }
+
+    @keyframes scan {
+      to { transform: translateX(220%); }
+    }
+
+    .loss-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .pill {
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.055);
+      color: #dbe4ff;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .result-card {
+      position: relative;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background:
+        radial-gradient(circle at 90% 8%, rgba(102, 226, 255, 0.13), transparent 12rem),
+        rgba(255, 255, 255, 0.052);
+      min-height: 180px;
+      overflow: hidden;
+    }
+
+    .result-card::after {
+      content: "";
+      position: absolute;
+      inset: auto 20px 18px 20px;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--blue), var(--violet), var(--pink));
+      opacity: 0.72;
+    }
+
+    .result-card .metric {
+      font-family: "JetBrains Mono", monospace;
+      font-size: clamp(32px, 4vw, 46px);
+      font-weight: 900;
+      letter-spacing: -0.07em;
+    }
+
+    .result-card .metric span {
+      color: var(--green);
+      font-size: 0.48em;
+      letter-spacing: -0.02em;
+      vertical-align: super;
+    }
+
+    .result-card h3 {
+      margin: 10px 0 8px;
+      font-size: 17px;
+    }
+
+    .result-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .comparison {
+      margin-top: 20px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.044);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 740px;
+    }
+
+    th,
+    td {
+      padding: 15px 18px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+
+    th {
+      color: #d9e4ff;
+      background: rgba(255, 255, 255, 0.055);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    td {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .best {
+      color: var(--green);
+      font-weight: 900;
+    }
+
+    .method-name {
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .analysis-card {
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.046);
+    }
+
+    .analysis-icon {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(102, 226, 255, 0.24), rgba(180, 140, 255, 0.18));
+      color: var(--blue);
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 900;
+    }
+
+    .analysis-card h3 {
+      margin: 0 0 10px;
+      font-size: 21px;
+      letter-spacing: -0.035em;
+    }
+
+    .analysis-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    .open-card {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 20px;
+      padding: 30px;
+      overflow: hidden;
+    }
+
+    .open-card h2 {
+      margin-top: 0;
+      font-size: clamp(30px, 4vw, 48px);
+    }
+
+    .open-card p {
+      color: var(--muted);
+      line-height: 1.75;
+      margin: 0 0 16px;
+    }
+
+    .design-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .design-item {
+      display: flex;
+      gap: 14px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .design-index {
+      flex: 0 0 34px;
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(102, 226, 255, 0.14);
+      color: var(--blue);
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 800;
+    }
+
+    .design-item h3 {
+      margin: 0 0 4px;
+      font-size: 16px;
+    }
+
+    .design-item p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .bibtex {
+      position: relative;
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: rgba(0, 0, 0, 0.24);
+      overflow: hidden;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      color: #dce7ff;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .copy-button {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      padding: 9px 12px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    footer {
+      padding: 44px 0 60px;
+      color: var(--subtle);
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .abstract-panel,
+      .open-card {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card {
+        min-height: auto;
+      }
+
+      .insight-card {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .pipeline-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        min-height: 20px;
+        transform: rotate(90deg);
+      }
+
+      .results-grid,
+      .analysis-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .page-shell {
+        width: min(100% - 24px, 1180px);
+      }
+
+      .nav {
+        align-items: flex-start;
+        border-radius: 22px;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .hero {
+        padding-top: 54px;
+      }
+
+      h1 {
+        letter-spacing: -0.06em;
+      }
+
+      .hero-metrics,
+      .results-grid,
+      .analysis-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card {
+        padding: 14px;
+      }
+
+      .frame {
+        width: 54px;
+        height: 76px;
+      }
+
+      .frame.f1 { left: 18px; }
+      .frame.f2 { left: 84px; }
+      .frame.f3 { left: 150px; }
+      .frame.f4 { left: 216px; }
+      .frame.f5 { left: 282px; }
+
+      .abstract-copy,
+      .insight-card,
+      .pipeline,
+      .open-card {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav page-shell" aria-label="Primary navigation">
+    <a class="brand" href="#top" aria-label="PV-VAE home">
+      <span class="brand-mark">P</span>
+      <span>PV-VAE</span>
+    </a>
+    <div class="nav-links">
+      <a href="#idea">Idea</a>
+      <a href="#method">Method</a>
+      <a href="#results">Results</a>
+      <a href="#analysis">Analysis</a>
+      <a href="#explore">Explore</a>
+      <a href="#citation">BibTeX</a>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="hero page-shell">
+      <div class="hero-grid">
+        <div class="hero-copy reveal">
+          <div class="eyebrow"><span class="pulse-dot"></span> Video Generation with Predictive Latents</div>
+          <h1><span class="gradient-text">Predictive Video VAE</span></h1>
+          <p class="subtitle">
+            PV-VAE turns a video tokenizer into a tiny world model: encode only the observed past, ask the decoder to reconstruct the full clip, and shape latents that are easier for diffusion models to generate.
+          </p>
+          <div class="authors">
+            <strong>Yian Zhao</strong><sup>1,2</sup>, Feng Wang<sup>1,&dagger;</sup>, Qiushan Guo<sup>1</sup>, Chang Liu<sup>3</sup>, Xiangyang Ji<sup>3</sup>, Jian Zhang<sup>2</sup>, Jie Chen<sup>2</sup>
+            <div class="affiliations">
+              <sup>1</sup>ByteDance Seed &nbsp; <sup>2</sup>Peking University &nbsp; <sup>3</sup>Tsinghua University &nbsp; <sup>&dagger;</sup>Project lead
+            </div>
+          </div>
+          <div class="actions" aria-label="Project links">
+            <a class="button primary" href="./PV_VAE_Seed.pdf" target="_blank" rel="noopener">Read Paper</a>
+            <a class="button" href="#method">See Method</a>
+            <a class="button" href="#explore">Implementation Notes</a>
+          </div>
+        </div>
+
+        <div class="hero-card reveal" aria-label="Predictive reconstruction illustration">
+          <div class="latent-stage">
+            <div class="latent-chip">observe &rarr; predict &rarr; diffuse</div>
+            <div class="frame observed f1" aria-hidden="true"></div>
+            <div class="frame observed f2" aria-hidden="true"></div>
+            <div class="frame observed f3" aria-hidden="true"></div>
+            <div class="frame predicted f4" aria-hidden="true"></div>
+            <div class="frame predicted f5" aria-hidden="true"></div>
+            <div class="time-track" aria-hidden="true"></div>
+          </div>
+          <div class="hero-metrics">
+            <div class="metric-card">
+              <div class="value">52%</div>
+              <div class="label">faster convergence over Wan2.2 VAE on UCF101</div>
+            </div>
+            <div class="metric-card">
+              <div class="value">34.42</div>
+              <div class="label">FVD improvement on UCF101 class-conditional generation</div>
+            </div>
+            <div class="metric-card">
+              <div class="value">t4s16c64</div>
+              <div class="label">compact latent configuration for video generation</div>
+            </div>
+            <div class="metric-card">
+              <div class="value">+8.5%</div>
+              <div class="label">point tracking AUC gain from stronger diffusion features</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section page-shell" id="idea">
+      <div class="section-header reveal">
+        <div class="section-kicker">Core Idea</div>
+        <h2>Good reconstruction is not enough.</h2>
+        <p class="lead">
+          Video VAEs are usually optimized to reproduce pixels. PV-VAE asks a sharper question: does the latent space expose motion, dynamics, and temporal structure in a form that downstream diffusion models can learn?
+        </p>
+      </div>
+      <div class="panel abstract-panel reveal">
+        <div class="abstract-copy">
+          <p>
+            Existing video VAEs can reconstruct clips well, but further reconstruction optimization does not necessarily improve generation. PV-VAE improves the <strong>diffusability</strong> of video latents by integrating predictive learning into VAE training.
+          </p>
+          <p>
+            At each step, the encoder receives only partial past observations. The decoder must reconstruct observed frames and predict withheld future frames from padded latents. This partial-to-complete objective forces the latent space to encode temporally predictive structure instead of acting as a pixel container.
+          </p>
+          <p>
+            A motion-aware objective further emphasizes temporal differences between adjacent frames, reducing the shortcut of copying static regions and directing capacity toward structural motion.
+          </p>
+        </div>
+        <aside class="insight-card">
+          <div class="quote-mark">"</div>
+          <h3>From what is in the frame to what happens next.</h3>
+          <p>
+            The key insight is intentionally simple and leaves a large design space: prediction target, masking schedule, padding strategy, architecture, and decoder tuning can all be explored without requiring a complex new generation pipeline.
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section page-shell" id="method">
+      <div class="section-header reveal">
+        <div class="section-kicker">Method</div>
+        <h2>Predictive reconstruction.</h2>
+        <p class="lead">
+          PV-VAE keeps the familiar encoder-decoder VAE training recipe, but changes what the encoder is allowed to see.
+        </p>
+      </div>
+      <div class="panel pipeline reveal">
+        <div class="pipeline-grid">
+          <article class="stage">
+            <div class="stage-label"><span>Step 01</span><span>Input</span></div>
+            <h3>Randomly drop future groups</h3>
+            <p>Split a video along time. Always retain the first frame, sample a dropping ratio, and hide the future groups from the encoder.</p>
+            <div class="mini-frames" aria-hidden="true">
+              <div class="mini-frame"></div>
+              <div class="mini-frame"></div>
+              <div class="mini-frame"></div>
+              <div class="mini-frame drop"></div>
+              <div class="mini-frame drop"></div>
+            </div>
+          </article>
+          <div class="arrow" aria-hidden="true">&rarr;</div>
+          <article class="stage">
+            <div class="stage-label"><span>Step 02</span><span>Latents</span></div>
+            <h3>Pad the observed latent sequence</h3>
+            <p>Encode only observed frames, then concatenate learnable or prior-sampled padding vectors so the decoder receives a full-length latent sequence.</p>
+            <div class="latent-grid" aria-hidden="true">
+              <div class="latent-cell"></div><div class="latent-cell"></div><div class="latent-cell"></div><div class="latent-cell"></div><div class="latent-cell"></div><div class="latent-cell"></div>
+              <div class="latent-cell"></div><div class="latent-cell"></div><div class="latent-cell"></div><div class="latent-cell"></div><div class="latent-cell"></div><div class="latent-cell"></div>
+            </div>
+          </article>
+          <div class="arrow" aria-hidden="true">&rarr;</div>
+          <article class="stage">
+            <div class="stage-label"><span>Step 03</span><span>Decode</span></div>
+            <h3>Reconstruct and predict together</h3>
+            <p>The decoder reconstructs the whole clip, learning visual fidelity from observed frames and temporal dynamics from withheld future frames.</p>
+            <div class="decode-lines" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+          </article>
+        </div>
+        <div class="loss-strip" aria-label="Training losses">
+          <span class="pill">MSE</span>
+          <span class="pill">temporal diff</span>
+          <span class="pill">LPIPS</span>
+          <span class="pill">GAN</span>
+          <span class="pill">KL</span>
+          <span class="pill">decoder fine-tuning</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section page-shell" id="results">
+      <div class="section-header reveal">
+        <div class="section-kicker">Results</div>
+        <h2>Generation-ready latents.</h2>
+        <p class="lead">
+          Across class-conditional and unconditional generation, PV-VAE improves video generation quality while preserving competitive reconstruction and practical inference efficiency.
+        </p>
+      </div>
+      <div class="results-grid reveal">
+        <article class="result-card">
+          <div class="metric">146.37</div>
+          <h3>UCF101 FVD</h3>
+          <p>Best overall FVD among compared video VAEs under the Latte generation setup.</p>
+        </article>
+        <article class="result-card">
+          <div class="metric">72.50</div>
+          <h3>RealEstate10K FVD</h3>
+          <p>Consistent gain in unconditional generation, suggesting better transferable video latents.</p>
+        </article>
+        <article class="result-card">
+          <div class="metric">69.72</div>
+          <h3>UCF101 IS</h3>
+          <p>Higher Inception Score with a high-compression t4s16c64 latent configuration.</p>
+        </article>
+        <article class="result-card">
+          <div class="metric">0.69</div>
+          <h3>VAE inference speed</h3>
+          <p>Faster than Wan2.2 VAE and Hunyuan-VAE in the reported 17-frame 256 x 256 setting.</p>
+        </article>
+      </div>
+      <div class="comparison reveal">
+        <table aria-label="Generation performance comparison">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Latent config</th>
+              <th>UCF101 FVD</th>
+              <th>UCF101 IS</th>
+              <th>RealEstate10K FVD</th>
+              <th>Train mem</th>
+              <th>Params</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="method-name">Hunyuan-VAE</td>
+              <td>t4s8c16</td>
+              <td>210.30</td>
+              <td>66.40</td>
+              <td>83.45</td>
+              <td>87.36 GiB</td>
+              <td>246M</td>
+            </tr>
+            <tr>
+              <td class="method-name">Wan2.2 VAE</td>
+              <td>t4s16c48</td>
+              <td>180.79</td>
+              <td>67.32</td>
+              <td>87.15</td>
+              <td>30.90 GiB</td>
+              <td>705M</td>
+            </tr>
+            <tr>
+              <td class="method-name">SSVAE</td>
+              <td>t4s16c48</td>
+              <td>168.68</td>
+              <td>66.39</td>
+              <td>79.08</td>
+              <td>34.00 GiB</td>
+              <td>315M</td>
+            </tr>
+            <tr>
+              <td class="method-name">PV-VAE</td>
+              <td>t4s16c64</td>
+              <td class="best">146.37</td>
+              <td class="best">69.72</td>
+              <td class="best">72.50</td>
+              <td>33.34 GiB</td>
+              <td>661M</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section page-shell" id="analysis">
+      <div class="section-header reveal">
+        <div class="section-kicker">Why It Works</div>
+        <h2>The latent space starts to understand motion.</h2>
+        <p class="lead">
+          PV-VAE is diagnosed beyond aggregate generation metrics: latent PCA, temporal distance, prediction accuracy, and diffusion-feature probing all point to stronger temporal structure.
+        </p>
+      </div>
+      <div class="analysis-grid reveal">
+        <article class="analysis-card">
+          <div class="analysis-icon">PCA</div>
+          <h3>Motion-aware latent activations</h3>
+          <p>Principal components align with optical flow: dynamic foregrounds become clearer while static backgrounds carry less noisy activation.</p>
+        </article>
+        <article class="analysis-card">
+          <div class="analysis-icon">LTD</div>
+          <h3>Smoother temporal trajectory</h3>
+          <p>Adjacent-frame latent distances become lower and sharper, while long-range distances grow monotonically with frame interval.</p>
+        </article>
+        <article class="analysis-card">
+          <div class="analysis-icon">PR</div>
+          <h3>Prediction correlates with generation</h3>
+          <p>Better future-frame prediction tracks better video generation, supporting predictive reconstruction as a useful latent constraint.</p>
+        </article>
+        <article class="analysis-card">
+          <div class="analysis-icon">Flow</div>
+          <h3>Optical flow probing</h3>
+          <p>Diffusion features learned on PV-VAE latents reduce endpoint error from 5.9223 to 5.1805.</p>
+        </article>
+        <article class="analysis-card">
+          <div class="analysis-icon">Next</div>
+          <h3>Next-frame prediction</h3>
+          <p>Feature probing improves MSE from 0.0314 to 0.0289, indicating stronger short-horizon dynamics.</p>
+        </article>
+        <article class="analysis-card">
+          <div class="analysis-icon">Track</div>
+          <h3>Point tracking</h3>
+          <p>Tracking AUC rises from 70.95 to 76.99, showing more useful motion representations for downstream understanding.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section page-shell" id="explore">
+      <div class="panel open-card reveal">
+        <div>
+          <div class="section-kicker">Implementation Notes</div>
+          <h2>Simple insight, open design space.</h2>
+          <p>
+            The production code cannot be released because of confidentiality constraints, but the method is deliberately lightweight: partial observation, latent padding, full-sequence reconstruction, and motion-aware supervision.
+          </p>
+          <p>
+            This makes PV-VAE more of a research direction than a locked recipe. The paper provides enough implementation detail for researchers to explore variants inside their own VAE and latent diffusion pipelines.
+          </p>
+        </div>
+        <div class="design-list">
+          <div class="design-item">
+            <div class="design-index">01</div>
+            <div>
+              <h3>Prediction schedule</h3>
+              <p>Vary maximum dropping ratio, temporal grouping, or replace suffix prediction with frame infilling.</p>
+            </div>
+          </div>
+          <div class="design-item">
+            <div class="design-index">02</div>
+            <div>
+              <h3>Latent padding</h3>
+              <p>Compare Gaussian, learnable, masked-token, or condition-aware padding strategies.</p>
+            </div>
+          </div>
+          <div class="design-item">
+            <div class="design-index">03</div>
+            <div>
+              <h3>Architecture</h3>
+              <p>Move beyond 3D causal CNNs and revisit Transformer video VAEs with predictive objectives.</p>
+            </div>
+          </div>
+          <div class="design-item">
+            <div class="design-index">04</div>
+            <div>
+              <h3>Training stages</h3>
+              <p>Freeze the encoder for decoder fine-tuning to recover reconstruction while preserving latent diffusability.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section page-shell" id="citation">
+      <div class="section-header reveal">
+        <div class="section-kicker">Citation</div>
+        <h2>BibTeX</h2>
+        <p class="lead">Please cite the paper if you find the idea useful for video VAE or latent video diffusion research.</p>
+      </div>
+      <div class="bibtex reveal">
+        <button class="copy-button" type="button" data-copy>Copy</button>
+        <pre id="bibtex">@article{zhao2026pvvae,
+  title   = {Video Generation with Predictive Latents},
+  author  = {Zhao, Yian and Wang, Feng and Guo, Qiushan and Liu, Chang and Ji, Xiangyang and Zhang, Jian and Chen, Jie},
+  year    = {2026},
+  note    = {Technical report}
+}</pre>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-shell">
+    Built for PV-VAE. Template and styling are self-contained for easy GitHub Pages deployment.
+  </footer>
+
+  <script>
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll(".reveal").forEach((element) => {
+      revealObserver.observe(element);
+    });
+
+    const sections = [...document.querySelectorAll("main section[id]")];
+    const navLinks = [...document.querySelectorAll(".nav-links a")];
+
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) {
+          return;
+        }
+        navLinks.forEach((link) => {
+          link.classList.toggle("active", link.getAttribute("href") === `#${entry.target.id}`);
+        });
+      });
+    }, { rootMargin: "-35% 0px -55% 0px", threshold: 0.01 });
+
+    sections.forEach((section) => navObserver.observe(section));
+
+    const copyButton = document.querySelector("[data-copy]");
+    const bibtex = document.querySelector("#bibtex");
+
+    copyButton.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(bibtex.textContent);
+      copyButton.textContent = "Copied";
+      window.setTimeout(() => {
+        copyButton.textContent = "Copy";
+      }, 1400);
+    });
+  </script>
+</body>
+</html>
