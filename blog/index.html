@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="keywords" content="Yian Zhao, Zhao Yian, blog, Cola DLM, unified multimodal model">
+	<meta name="description" content="Yian Zhao's Blog">
+	<link rel="stylesheet" href="../css/jemdoc.css" type="text/css">
+	<title>Blog | Yian Zhao</title>
+	<style>
+		.top-nav {
+			display: flex;
+			justify-content: flex-end;
+			gap: 18px;
+			margin-bottom: 20px;
+			padding-bottom: 10px;
+			border-bottom: 1px solid #dddddd;
+			font-size: 15px;
+		}
+		.top-nav a {
+			color: #527bbd;
+			font-weight: bold;
+		}
+		.blog-card {
+			display: flex;
+			gap: 18px;
+			margin-top: 18px;
+			padding: 16px;
+			border: 1px solid #dddddd;
+			border-radius: 8px;
+			background: #fbfbfb;
+		}
+		.blog-card img {
+			width: 180px;
+			height: 110px;
+			object-fit: cover;
+			border-radius: 6px;
+			box-shadow: 2px 2px 6px #cccccc;
+		}
+		.blog-card h2 {
+			margin-top: 0;
+			padding-top: 0;
+			border-bottom: none;
+		}
+		.blog-meta {
+			color: #666666;
+			font-size: 13px;
+		}
+		.blog-links {
+			margin-top: 10px;
+			font-size: 14px;
+		}
+		@media (max-width: 700px) {
+			.top-nav {
+				justify-content: flex-start;
+				flex-wrap: wrap;
+			}
+			.blog-card {
+				flex-direction: column;
+			}
+			.blog-card img {
+				width: 100%;
+				height: auto;
+			}
+		}
+	</style>
+</head>
+<body>
+<div id="layout-content" style="margin-top:25px">
+	<nav class="top-nav">
+		<a href="../">Home</a>
+		<a href="./">Blog</a>
+		<a href="https://github.com/Zhao-Yian" target="_blank">GitHub</a>
+	</nav>
+
+	<div id="toptitle">
+		<h1>Blog</h1>
+	</div>
+	<p style="font-size: 15px">
+		Notes on generative models, multimodal learning, and research ideas.
+	</p>
+
+	<div class="blog-card">
+		<a href="https://zhao-yian.github.io/Unified-Cola/blog/2026/unified-cola/">
+			<img src="../files/Paper/Cola_DLM.png" alt="Continuous Latent Diffusion Language Model">
+		</a>
+		<div>
+			<h2><a href="https://zhao-yian.github.io/Unified-Cola/blog/2026/unified-cola/">基于 Cola DLM 的统一多模态 Flow Matching</a></h2>
+			<div class="blog-meta">2026 · Unified Multimodal Pretraining · Latent Diffusion · Flow Matching</div>
+			<p>
+				An exploration of unified text-vision modeling with Cola DLM, using continuous latent spaces and a shared block-causal MMDiT for understanding and generation.
+			</p>
+			<div class="blog-links">
+				[<a href="https://zhao-yian.github.io/Unified-Cola/blog/2026/unified-cola/">中文</a>] /
+				[<a href="https://zhao-yian.github.io/Unified-Cola/blog/2026/unified-cola-en/">English</a>] /
+				[<a href="https://hongcanguo.github.io/Cola-DLM/" target="_blank">Project</a>] /
+				[<a href="https://arxiv.org/abs/2605.06548" target="_blank">Paper</a>]
+			</div>
+		</div>
+	</div>
+
+	<div id="footer">
+		<div id="footer-text"></div>
+	</div>
+</div>
+</body>
+</html>
