@@ -8,7 +8,7 @@
 	<title>Blog | Yian Zhao</title>
 	<style>
 		html {
-			background: #0f172a;
+			background: #eef4ff;
 		}
 		body {
 			position: relative;
@@ -16,8 +16,8 @@
 			overflow-x: hidden;
 			color: #1e293b;
 			background:
-				linear-gradient(180deg, rgba(248, 250, 252, 0.08) 0%, rgba(241, 245, 249, 0.94) 420px, #f8fafc 100%),
-				#0f172a;
+				linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(248, 250, 252, 0.88) 440px, #f8fafc 100%),
+				#eef4ff;
 			border: none;
 			box-shadow: none;
 		}
@@ -31,13 +31,13 @@
 			height: 620px;
 			pointer-events: none;
 			background:
-				radial-gradient(circle at 18% 28%, rgba(96, 165, 250, 0.82), transparent 28%),
-				radial-gradient(circle at 72% 18%, rgba(168, 85, 247, 0.68), transparent 25%),
-				radial-gradient(circle at 82% 68%, rgba(45, 212, 191, 0.58), transparent 28%),
-				radial-gradient(circle at 34% 72%, rgba(251, 191, 36, 0.42), transparent 24%),
-				linear-gradient(135deg, #0f172a 0%, #172554 48%, #312e81 100%);
+				radial-gradient(circle at 18% 28%, rgba(147, 197, 253, 0.72), transparent 28%),
+				radial-gradient(circle at 72% 18%, rgba(196, 181, 253, 0.58), transparent 25%),
+				radial-gradient(circle at 82% 68%, rgba(125, 211, 252, 0.46), transparent 28%),
+				radial-gradient(circle at 34% 72%, rgba(253, 230, 138, 0.40), transparent 24%),
+				linear-gradient(135deg, #dbeafe 0%, #ede9fe 48%, #fef3c7 100%);
 			background-size: 140% 140%;
-			filter: blur(34px) saturate(1.18);
+			filter: blur(36px) saturate(1.08);
 			transform: scale(1.08);
 			animation: blogMeshDrift 18s ease-in-out infinite alternate;
 		}
@@ -71,11 +71,11 @@
 			gap: 18px;
 			margin-bottom: 42px;
 			padding: 14px 18px;
-			border: 1px solid rgba(255, 255, 255, 0.22);
+			border: 1px solid rgba(255, 255, 255, 0.62);
 			border-radius: 999px;
-			background: rgba(15, 23, 42, 0.28);
+			background: rgba(255, 255, 255, 0.34);
 			backdrop-filter: blur(18px);
-			box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+			box-shadow: 0 12px 30px rgba(82, 123, 189, 0.12);
 			font-size: 15px;
 		}
 		.top-nav .nav-links {
@@ -84,51 +84,36 @@
 			flex-wrap: wrap;
 		}
 		.top-nav a {
-			color: rgba(255, 255, 255, 0.84);
+			color: rgba(30, 58, 138, 0.78);
 			font-weight: bold;
 		}
 		.top-nav a:hover {
-			color: #ffffff;
+			color: #1e3a8a;
 			border-bottom: none;
 		}
 		.blog-hero {
 			position: relative;
 			margin: 18px 0 54px;
-			padding: 76px 28px 90px;
+			padding: 70px 28px 92px;
 			text-align: center;
 			color: #ffffff;
 		}
-		.blog-kicker {
-			margin-bottom: 16px;
-			font-size: 13px;
-			font-weight: bold;
-			letter-spacing: 0.22em;
-			text-transform: uppercase;
-			color: rgba(255, 255, 255, 0.74);
-		}
 		.blog-title {
 			margin: 0;
-			padding: 0;
+			padding: 10px 0 14px;
 			border-bottom: none;
 			font-size: clamp(46px, 8vw, 92px);
-			line-height: 0.96;
-			letter-spacing: -0.07em;
-			color: #ffffff;
-			text-shadow: 0 18px 44px rgba(15, 23, 42, 0.48);
+			line-height: 1.08;
+			letter-spacing: -0.045em;
+			color: #17324d;
+			text-shadow: 0 16px 36px rgba(82, 123, 189, 0.22);
 		}
 		.blog-title span {
 			display: inline-block;
-			background: linear-gradient(100deg, #ffffff 0%, #dbeafe 35%, #fef3c7 70%, #ffffff 100%);
+			background: linear-gradient(100deg, #17324d 0%, #315f9f 36%, #7c5fb2 70%, #17324d 100%);
 			-webkit-background-clip: text;
 			background-clip: text;
 			color: transparent;
-		}
-		.blog-subtitle {
-			max-width: 620px;
-			margin: 24px auto 0;
-			color: rgba(255, 255, 255, 0.78);
-			font-size: 17px;
-			line-height: 1.7;
 		}
 		.blog-list {
 			display: grid;
@@ -247,11 +232,7 @@
 	</nav>
 
 	<div class="blog-hero">
-		<div class="blog-kicker">Research Notes & Ideas</div>
 		<h1 class="blog-title"><span>Zhao Yian's Blog</span></h1>
-		<p class="blog-subtitle">
-			Notes on generative models, multimodal learning, and research ideas.
-		</p>
 	</div>
 
 	<div class="blog-list">
