@@ -95,6 +95,177 @@
 			.top-nav .nav-links a:hover {
 				color: #022b6d;
 			}
+			html {
+				background:
+					radial-gradient(circle at top left, rgba(82, 123, 189, 0.20), transparent 32rem),
+					linear-gradient(135deg, #eef4ff 0%, #f7f3ea 45%, #f8fbff 100%);
+			}
+			body {
+				color: #1f2937;
+				background: rgba(255, 255, 255, 0.86);
+				border: 1px solid rgba(82, 123, 189, 0.12);
+				border-radius: 28px;
+				box-shadow: 0 24px 70px rgba(31, 41, 55, 0.13);
+			}
+			#layout-content {
+				background: transparent;
+			}
+			.top-nav {
+				margin-bottom: 34px;
+				padding: 0 82px 16px 0;
+				border-bottom: 1px solid rgba(82, 123, 189, 0.16);
+				background: rgba(255, 255, 255, 0.72);
+				backdrop-filter: blur(14px);
+			}
+			.top-nav .nav-brand {
+				letter-spacing: 0.01em;
+			}
+			.top-nav .nav-links a {
+				padding: 6px 10px;
+				border-radius: 999px;
+			}
+			.top-nav .nav-links a:hover {
+				border-bottom: none;
+				background: rgba(82, 123, 189, 0.10);
+			}
+			.profile-hero {
+				position: relative;
+				overflow: hidden;
+				margin: 8px 0 30px;
+				padding: 34px 38px;
+				border: 1px solid rgba(82, 123, 189, 0.15);
+				border-radius: 24px;
+				background:
+					linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(245, 248, 255, 0.84)),
+					radial-gradient(circle at top right, rgba(82, 123, 189, 0.18), transparent 22rem);
+				box-shadow: 0 16px 40px rgba(82, 123, 189, 0.12);
+			}
+			.profile-hero:before {
+				content: "";
+				position: absolute;
+				inset: 0;
+				border-top: 4px solid rgba(82, 123, 189, 0.55);
+				pointer-events: none;
+			}
+			.profile-hero #toptitle {
+				margin-bottom: 12px;
+				padding-bottom: 0;
+			}
+			.profile-hero h1 {
+				margin-top: 0;
+				font-size: 240%;
+				letter-spacing: -0.03em;
+				color: #17324d;
+			}
+			.profile-hero h3 {
+				margin: 8px 0 0 !important;
+				padding: 0;
+				color: #536273;
+				font-size: 112%;
+				font-weight: normal;
+				line-height: 1.35;
+			}
+			.profile-links {
+				display: flex;
+				align-items: center;
+				flex-wrap: wrap;
+				gap: 12px;
+				margin: 24px 0 0;
+			}
+			.profile-links a {
+				display: inline-flex;
+				align-items: center;
+				min-height: 34px;
+			}
+			.profile-links img {
+				height: 28px;
+				margin-bottom: 0 !important;
+				opacity: 0.88;
+				transition: transform 0.2s ease, opacity 0.2s ease;
+			}
+			.profile-links a:hover {
+				border-bottom: none;
+			}
+			.profile-links a:hover img {
+				opacity: 1;
+				transform: translateY(-2px);
+			}
+			.profile-links .cv-link {
+				padding: 7px 15px;
+				border: 1px solid rgba(82, 123, 189, 0.28);
+				border-radius: 999px;
+				background: rgba(82, 123, 189, 0.08);
+				color: #2d5f9e;
+				font-weight: bold;
+			}
+			.profile-links .cv-link:hover {
+				background: rgba(82, 123, 189, 0.14);
+				border-bottom: 1px solid rgba(82, 123, 189, 0.28);
+			}
+			h2 {
+				color: #17324d;
+				border-bottom: 1px solid rgba(82, 123, 189, 0.22);
+			}
+			.selected-papers-divider {
+				position: relative;
+				margin: 24px 0 28px;
+				text-align: center;
+			}
+			.selected-papers-divider:before {
+				content: "";
+				position: absolute;
+				top: 50%;
+				left: 0;
+				right: 0;
+				height: 1px;
+				background: linear-gradient(90deg, transparent, rgba(82, 123, 189, 0.34), transparent);
+			}
+			.selected-papers-divider span {
+				position: relative;
+				display: inline-flex;
+				align-items: center;
+				padding: 7px 16px;
+				border: 1px solid rgba(82, 123, 189, 0.16);
+				border-radius: 999px;
+				background: rgba(255, 255, 255, 0.84);
+				color: #52637a;
+				font-size: 13px;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				box-shadow: 0 8px 20px rgba(31, 41, 55, 0.06);
+			}
+			table[id="tbPublications"] {
+				overflow: hidden;
+				margin-top: 16px;
+				border: 1px solid rgba(82, 123, 189, 0.12);
+				border-radius: 18px;
+				background: rgba(255, 255, 255, 0.72) !important;
+				box-shadow: 0 10px 28px rgba(31, 41, 55, 0.07);
+				transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+			}
+			table[id="tbPublications"]:hover {
+				transform: translateY(-2px);
+				border-color: rgba(82, 123, 189, 0.22);
+				box-shadow: 0 16px 36px rgba(31, 41, 55, 0.11);
+			}
+			table[id="tbPublications"][style*="#ffffdf"] {
+				background:
+					linear-gradient(135deg, rgba(255, 251, 235, 0.92), rgba(239, 246, 255, 0.84)) !important;
+				border-color: rgba(245, 158, 11, 0.22);
+			}
+			table[id="tbPublications"] img,
+			table[id="tbPublications"] video {
+				border-radius: 14px;
+				box-shadow: 0 10px 24px rgba(31, 41, 55, 0.13) !important;
+			}
+			table[id="tbPublications"] b[style*="#456fc3"] {
+				color: #2457a6 !important;
+				font-size: 16px !important;
+				line-height: 1.35;
+			}
+			#footer {
+				border-top: 1px solid rgba(82, 123, 189, 0.14);
+			}
 			@media (max-width: 700px) {
 				.top-nav {
 					flex-direction: column;
@@ -103,6 +274,31 @@
 				}
 				.top-nav .nav-links {
 					gap: 14px;
+				}
+				body {
+					margin-top: 0;
+					margin-bottom: 0;
+					padding-left: 22px;
+					padding-right: 22px;
+					border-radius: 0;
+				}
+				.profile-hero {
+					padding: 28px 24px;
+				}
+				.profile-hero h1 {
+					font-size: 205%;
+				}
+				table[id="tbPublications"],
+				table[id="tbPublications"] tbody,
+				table[id="tbPublications"] tr,
+				table[id="tbPublications"] td {
+					display: block;
+					width: auto !important;
+				}
+				table[id="tbPublications"] img,
+				table[id="tbPublications"] video {
+					max-width: 100%;
+					height: auto;
 				}
 			}
 		</style>
@@ -122,33 +318,24 @@
  </nav>
  <a href="https://github.com/Zhao-Yian" class="github-corner"><svg width="80" height="80" viewBox="0 0 250 250" style="fill: #527bbd; color:#fff; position: absolute; top: 0; border: 0; right: 0;"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
 
-<table>
-	<tbody>
-		<tr>
-			<td width="720">
-				<div id="toptitle">					
-					<h1>Yian Zhao (赵祎安)</h1>
-				</div>
+<div class="profile-hero">
+	<div id="toptitle">
+		<h1>Yian Zhao (赵祎安)</h1>
+	</div>
 <!--				<img src="./files/institute/pku.png" alt="" style="width: 10%;">-->
-				<h3 style="margin-top: -20px;">PhD Student @ PKU </h3>
-				<h3 style="margin-top: -10px;">Video Generation, Unified Model, World Action Model </h3>
-				<p  style="margin-top: 20px;">
-					<a href="mailto:zhaoyian.zh@gmail.com" target="_blank"><img src="./files/icon/email.png" height="32px" style="margin-bottom:-4px"></a>&nbsp;
-					<a href="https://scholar.google.com/citations?user=1ncPLCYAAAAJ&hl=en" target="_blank"><img src="./files/icon/google_scholar.png" height="30px" style="margin-bottom:-3px"></a>&nbsp;
-					<a href="https://github.com/Zhao-Yian" target="_blank"><img src="./files/icon/github_s.jpg" height="30px" style="margin-bottom:-3px"></a>&nbsp;
-					<a href="./files/CV/CV-Yian Zhao.pdf">[CV]</a>&nbsp;
+	<h3>PhD Student @ PKU </h3>
+	<h3>Video Generation, Unified Model, World Action Model </h3>
+	<p class="profile-links">
+		<a href="mailto:zhaoyian.zh@gmail.com" target="_blank"><img src="./files/icon/email.png" height="32px" style="margin-bottom:-4px"></a>
+		<a href="https://scholar.google.com/citations?user=1ncPLCYAAAAJ&hl=en" target="_blank"><img src="./files/icon/google_scholar.png" height="30px" style="margin-bottom:-3px"></a>
+		<a href="https://github.com/Zhao-Yian" target="_blank"><img src="./files/icon/github_s.jpg" height="30px" style="margin-bottom:-3px"></a>
+		<a class="cv-link" href="./files/CV/CV-Yian Zhao.pdf">[CV]</a>
 <!--					<br><br>-->
 <!--					<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fzhao-yian.github.io&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/></a>-->
 <!--					<img alt="GitHub User's stars" src="https://img.shields.io/github/stars/Zhao-Yian">-->
 <!--					<img alt="GitHub followers" src="https://img.shields.io/github/followers/Zhao-Yian">-->
-				</p>
-			</td>
-			<td>
-				<img src="./images/001.jpg" border="0" width="150"><br>
-			</td>
-		</tr><tr>
-	</tr></tbody>
-</table>
+	</p>
+</div>
 
 
 <h2 style="margin-top: -10px;">Biography</h2>
@@ -187,8 +374,8 @@ thus promoting the implementation of Artificial General Intelligence in the phys
 </div>
 
 <h2> Publications | <a href="https://scholar.google.com/citations?user=1ncPLCYAAAAJ&hl=en">[Google Scholar]</a></h2>
-<div style="text-align: center; position: relative; margin-bottom: 50px; margin-top: 20px;">
-	<span style="position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%); background-color: rgba(128, 128, 128, 0.3); padding: 0 10px;">
+<div class="selected-papers-divider">
+	<span>
 		<b>Selected Papers</b>
 	</span>
 </div>

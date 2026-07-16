@@ -7,59 +7,228 @@
 	<link rel="stylesheet" href="../css/jemdoc.css" type="text/css">
 	<title>Blog | Yian Zhao</title>
 	<style>
+		html {
+			background: #0f172a;
+		}
+		body {
+			position: relative;
+			z-index: 0;
+			overflow-x: hidden;
+			color: #1e293b;
+			background:
+				linear-gradient(180deg, rgba(248, 250, 252, 0.08) 0%, rgba(241, 245, 249, 0.94) 420px, #f8fafc 100%),
+				#0f172a;
+			border: none;
+			box-shadow: none;
+		}
+		body:before {
+			content: "";
+			position: fixed;
+			top: -20%;
+			left: -20%;
+			z-index: 0;
+			width: 140%;
+			height: 620px;
+			pointer-events: none;
+			background:
+				radial-gradient(circle at 18% 28%, rgba(96, 165, 250, 0.82), transparent 28%),
+				radial-gradient(circle at 72% 18%, rgba(168, 85, 247, 0.68), transparent 25%),
+				radial-gradient(circle at 82% 68%, rgba(45, 212, 191, 0.58), transparent 28%),
+				radial-gradient(circle at 34% 72%, rgba(251, 191, 36, 0.42), transparent 24%),
+				linear-gradient(135deg, #0f172a 0%, #172554 48%, #312e81 100%);
+			background-size: 140% 140%;
+			filter: blur(34px) saturate(1.18);
+			transform: scale(1.08);
+			animation: blogMeshDrift 18s ease-in-out infinite alternate;
+		}
+		body:after {
+			content: "";
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 0;
+			width: 100%;
+			height: 520px;
+			pointer-events: none;
+			background:
+				linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+			background-size: 48px 48px;
+			mask-image: linear-gradient(to bottom, black, transparent);
+		}
+		#layout-content {
+			position: relative;
+			z-index: 1;
+			background: transparent;
+		}
 		.top-nav {
 			position: sticky;
 			top: 0;
 			z-index: 100;
 			display: flex;
 			justify-content: flex-end;
+			align-items: center;
 			gap: 18px;
-			margin-bottom: 20px;
-			padding: 12px 0;
-			border-bottom: 1px solid #dddddd;
-			background: #ffffff;
+			margin-bottom: 42px;
+			padding: 14px 18px;
+			border: 1px solid rgba(255, 255, 255, 0.22);
+			border-radius: 999px;
+			background: rgba(15, 23, 42, 0.28);
+			backdrop-filter: blur(18px);
+			box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
 			font-size: 15px;
 		}
+		.top-nav .nav-links {
+			display: flex;
+			gap: 18px;
+			flex-wrap: wrap;
+		}
 		.top-nav a {
-			color: #527bbd;
+			color: rgba(255, 255, 255, 0.84);
 			font-weight: bold;
+		}
+		.top-nav a:hover {
+			color: #ffffff;
+			border-bottom: none;
+		}
+		.blog-hero {
+			position: relative;
+			margin: 18px 0 54px;
+			padding: 76px 28px 90px;
+			text-align: center;
+			color: #ffffff;
+		}
+		.blog-kicker {
+			margin-bottom: 16px;
+			font-size: 13px;
+			font-weight: bold;
+			letter-spacing: 0.22em;
+			text-transform: uppercase;
+			color: rgba(255, 255, 255, 0.74);
+		}
+		.blog-title {
+			margin: 0;
+			padding: 0;
+			border-bottom: none;
+			font-size: clamp(46px, 8vw, 92px);
+			line-height: 0.96;
+			letter-spacing: -0.07em;
+			color: #ffffff;
+			text-shadow: 0 18px 44px rgba(15, 23, 42, 0.48);
+		}
+		.blog-title span {
+			display: inline-block;
+			background: linear-gradient(100deg, #ffffff 0%, #dbeafe 35%, #fef3c7 70%, #ffffff 100%);
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+		}
+		.blog-subtitle {
+			max-width: 620px;
+			margin: 24px auto 0;
+			color: rgba(255, 255, 255, 0.78);
+			font-size: 17px;
+			line-height: 1.7;
+		}
+		.blog-list {
+			display: grid;
+			gap: 22px;
+			margin-top: -26px;
 		}
 		.blog-card {
 			display: flex;
-			gap: 18px;
-			margin-top: 18px;
-			padding: 16px;
-			border: 1px solid #dddddd;
-			border-radius: 8px;
-			background: #fbfbfb;
+			gap: 24px;
+			margin-top: 0;
+			padding: 22px;
+			border: 1px solid rgba(148, 163, 184, 0.20);
+			border-radius: 22px;
+			background: rgba(255, 255, 255, 0.88);
+			box-shadow: 0 18px 48px rgba(15, 23, 42, 0.10);
+			backdrop-filter: blur(16px);
+			transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+		}
+		.blog-card:hover {
+			transform: translateY(-4px);
+			border-color: rgba(82, 123, 189, 0.28);
+			box-shadow: 0 24px 58px rgba(15, 23, 42, 0.15);
 		}
 		.blog-card img {
-			width: 180px;
-			height: 110px;
+			width: 210px;
+			height: 128px;
 			object-fit: cover;
-			border-radius: 6px;
-			box-shadow: 2px 2px 6px #cccccc;
+			border-radius: 16px;
+			box-shadow: 0 14px 30px rgba(15, 23, 42, 0.14);
 		}
 		.blog-card h2 {
 			margin-top: 0;
+			margin-bottom: 10px;
 			padding-top: 0;
+			border-bottom: none;
+			font-size: 150%;
+			line-height: 1.25;
+			color: #17324d;
+		}
+		.blog-card h2 a {
+			color: #17324d;
+		}
+		.blog-card h2 a:hover {
+			color: #527bbd;
 			border-bottom: none;
 		}
 		.blog-meta {
-			color: #666666;
+			color: #64748b;
 			font-size: 13px;
+			font-weight: bold;
+			letter-spacing: 0.02em;
+		}
+		.blog-card p {
+			margin-top: 12px;
+			color: #475569;
+			line-height: 1.65;
 		}
 		.blog-links {
-			margin-top: 10px;
+			margin-top: 14px;
 			font-size: 14px;
+		}
+		.blog-links a {
+			color: #2d5f9e;
+			font-weight: bold;
+		}
+		@keyframes blogMeshDrift {
+			0% {
+				background-position: 0% 42%;
+				transform: scale(1.08) rotate(0deg);
+			}
+			50% {
+				background-position: 68% 22%;
+			}
+			100% {
+				background-position: 100% 78%;
+				transform: scale(1.12) rotate(2deg);
+			}
+		}
+		@media (prefers-reduced-motion: reduce) {
+			body:before {
+				animation: none;
+			}
+			.blog-card {
+				transition: none;
+			}
 		}
 		@media (max-width: 700px) {
 			.top-nav {
-				justify-content: flex-start;
-				flex-wrap: wrap;
+				align-items: flex-start;
+				border-radius: 20px;
+				flex-direction: column;
+				margin-bottom: 22px;
+			}
+			.blog-hero {
+				margin-top: 0;
+				padding: 54px 0 72px;
 			}
 			.blog-card {
 				flex-direction: column;
+				padding: 18px;
 			}
 			.blog-card img {
 				width: 100%;
@@ -71,32 +240,37 @@
 <body>
 <div id="layout-content" style="margin-top:25px">
 	<nav class="top-nav">
-		<a href="../">Home</a>
-		<a href="https://github.com/Zhao-Yian" target="_blank">GitHub</a>
+		<div class="nav-links">
+			<a href="../">Home</a>
+			<a href="https://github.com/Zhao-Yian" target="_blank">GitHub</a>
+		</div>
 	</nav>
 
-	<div id="toptitle">
-		<h1>Yian Zhao's Blog</h1>
+	<div class="blog-hero">
+		<div class="blog-kicker">Research Notes & Ideas</div>
+		<h1 class="blog-title"><span>Zhao Yian's Blog</span></h1>
+		<p class="blog-subtitle">
+			Notes on generative models, multimodal learning, and research ideas.
+		</p>
 	</div>
-	<p style="font-size: 15px">
-		Notes on generative models, multimodal learning, and research ideas.
-	</p>
 
-	<div class="blog-card">
-		<a href="https://zhao-yian.github.io/Unified-Cola/blog/2026/unified-cola/">
-			<img src="../files/Paper/Cola_DLM.png" alt="Continuous Latent Diffusion Language Model">
-		</a>
-		<div>
-			<h2><a href="https://zhao-yian.github.io/Unified-Cola/blog/2026/unified-cola/">基于 Cola DLM 的统一多模态 Flow Matching</a></h2>
-			<div class="blog-meta">2026 · Unified Multimodal Pretraining · Latent Diffusion · Flow Matching</div>
-			<p>
-				An exploration of unified text-vision modeling with Cola DLM, using continuous latent spaces and a shared block-causal MMDiT for understanding and generation.
-			</p>
-			<div class="blog-links">
-				[<a href="https://zhao-yian.github.io/Unified-Cola/blog/2026/unified-cola/">中文</a>] /
-				[<a href="https://zhao-yian.github.io/Unified-Cola/blog/2026/unified-cola-en/">English</a>] /
-				[<a href="https://hongcanguo.github.io/Cola-DLM/" target="_blank">Project</a>] /
-				[<a href="https://arxiv.org/abs/2605.06548" target="_blank">Paper</a>]
+	<div class="blog-list">
+		<div class="blog-card">
+			<a href="https://zhao-yian.github.io/Unified-Cola/blog/2026/unified-cola/">
+				<img src="../files/Paper/Cola_DLM.png" alt="Continuous Latent Diffusion Language Model">
+			</a>
+			<div>
+				<h2><a href="https://zhao-yian.github.io/Unified-Cola/blog/2026/unified-cola/">基于 Cola DLM 的统一多模态 Flow Matching</a></h2>
+				<div class="blog-meta">2026 · Unified Multimodal Pretraining · Latent Diffusion · Flow Matching</div>
+				<p>
+					An exploration of unified text-vision modeling with Cola DLM, using continuous latent spaces and a shared block-causal MMDiT for understanding and generation.
+				</p>
+				<div class="blog-links">
+					[<a href="https://zhao-yian.github.io/Unified-Cola/blog/2026/unified-cola/">中文</a>] /
+					[<a href="https://zhao-yian.github.io/Unified-Cola/blog/2026/unified-cola-en/">English</a>] /
+					[<a href="https://hongcanguo.github.io/Cola-DLM/" target="_blank">Project</a>] /
+					[<a href="https://arxiv.org/abs/2605.06548" target="_blank">Paper</a>]
+				</div>
 			</div>
 		</div>
 	</div>
