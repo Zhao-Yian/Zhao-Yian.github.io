@@ -1,0 +1,154 @@
+{
+ "grid_60s_set1": [
+  {
+   "episode": 55105,
+   "task": "Move the silver object to the left side of the first shelf"
+  },
+  {
+   "episode": 56382,
+   "task": "Pick up the green and yellow blocks from the counter and place them on top of the stack on the left then move the blue block to the left."
+  },
+  {
+   "episode": 57196,
+   "task": "Move the black chess piece forwards on the chess board"
+  },
+  {
+   "episode": 56499,
+   "task": "Place the two small books inside the black box"
+  },
+  {
+   "episode": 55941,
+   "task": "Move the red and yellow blocks to the left"
+  },
+  {
+   "episode": 56190,
+   "task": "Put the bird plush toy in the light green bowl."
+  },
+  {
+   "episode": 55667,
+   "task": "Place the pink cup on the dish rack"
+  },
+  {
+   "episode": 56241,
+   "task": "Put the objects to the right of the box in the box"
+  },
+  {
+   "episode": 55334,
+   "task": "Move the blue cup backwards then place the green marker in the cup."
+  }
+ ],
+ "grid_60s_set2": [
+  {
+   "episode": 55859,
+   "task": "Pick up the brown round object and put it in the green bowl"
+  },
+  {
+   "episode": 56218,
+   "task": "Remove the screwdriver from the rack, put it in the cup, and then remove the book from the table and put it in the box"
+  },
+  {
+   "episode": 56699,
+   "task": "Put the ball in the top cupboard"
+  },
+  {
+   "episode": 55184,
+   "task": "Stack up the wooden chips on the left"
+  },
+  {
+   "episode": 55456,
+   "task": "Remove the glass lid from the pot, put it on the stove and move the pot to the top right stove plate"
+  },
+  {
+   "episode": 56653,
+   "task": "Pick up the pink cup and spoon and put them in the drying rack"
+  },
+  {
+   "episode": 57369,
+   "task": "Pick up the pen from the table and put it in the blue cup."
+  },
+  {
+   "episode": 55748,
+   "task": "Put the lid on the clear bowl."
+  },
+  {
+   "episode": 55997,
+   "task": "Move the left tray forward"
+  }
+ ],
+ "grid_ultra_4001f_set1": [
+  {
+   "episode": 55006,
+   "task": "Remove the blue marker from the red mug"
+  },
+  {
+   "episode": 55121,
+   "task": "Put the white container in the sink"
+  },
+  {
+   "episode": 55355,
+   "task": "Take the silver lid from the table and put it on the silver container"
+  },
+  {
+   "episode": 56057,
+   "task": "Put the marker inside the blue cup"
+  },
+  {
+   "episode": 56426,
+   "task": "Move the spoon forwards"
+  },
+  {
+   "episode": 56539,
+   "task": "Put the yellow block on the table"
+  },
+  {
+   "episode": 56588,
+   "task": "Remove the lid from the glass bottle"
+  },
+  {
+   "episode": 57482,
+   "task": "Remove the teacup from the blue bowl and place it on the right side of the counter."
+  },
+  {
+   "episode": 57090,
+   "task": "Pick up the green square block and put it on the table, pick up the orange square block and put it on the table, pick up the navy blue square block and put it on the orange square block"
+  }
+ ],
+ "grid_ultra_4001f_set2": [
+  {
+   "episode": 55140,
+   "task": "Put the first right spoon on the first left spoon"
+  },
+  {
+   "episode": 55227,
+   "task": "Put the green sponge on the white sponge then place the two sponges in the clear container"
+  },
+  {
+   "episode": 56744,
+   "task": "Put the knife into the bowl"
+  },
+  {
+   "episode": 56122,
+   "task": "Pick up a slice of bread from the glass bowl and put it in the toaster."
+  },
+  {
+   "episode": 55432,
+   "task": "Pick up the silver object from the bottom of the coffee machine and put it on top of the coffee machine"
+  },
+  {
+   "episode": 56958,
+   "task": "Unstack the bowls"
+  },
+  {
+   "episode": 57279,
+   "task": "Put the Fanta can inside the left part of the sink"
+  },
+  {
+   "episode": 57343,
+   "task": "Put the yellow plate on the windowsill."
+  },
+  {
+   "episode": 56458,
+   "task": "Place the tongs inside the cup"
+  }
+ ]
+}

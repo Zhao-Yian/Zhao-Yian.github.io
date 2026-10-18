@@ -1,0 +1,931 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Fréchet Forcing trains long-horizon streaming video world models from short clips using Fréchet-distance objectives against real data — requiring no teacher, no online critic, and no long videos."
+    />
+    <meta name="theme-color" content="#f6f5f1" />
+    <title>Fréchet Forcing: Training Long-Horizon Streaming World Models from Short Clips</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header" data-header>
+      <a class="wordmark" href="#top" aria-label="Fréchet Forcing home">
+        <span class="wordmark-mark" aria-hidden="true"></span>
+        Fréchet Forcing
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#overview">Overview</a>
+        <a href="#demos">Demos</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#analysis">Analysis</a>
+      </nav>
+      <a class="header-link" href="https://github.com/zhao-yian/Frechet_Forcing" target="_blank" rel="noopener">Code ↗</a>
+      <button class="menu-button" type="button" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span>
+      </button>
+    </header>
+
+    <div class="mobile-menu" aria-hidden="true">
+      <a href="#overview">Overview</a>
+      <a href="#demos">Demos</a>
+      <a href="#method">Method</a>
+      <a href="#results">Results</a>
+      <a href="#analysis">Analysis</a>
+    </div>
+
+    <main id="top">
+      <!-- HERO SECTION -->
+      <section class="hero page-width">
+        <div class="hero-copy reveal">
+          <p class="paper-label">Research project · 2026</p>
+          <h1>
+            <span>Fréchet Forcing:</span>
+            Training Long-Horizon Streaming World Models from Short Clips
+          </h1>
+          <p class="hero-summary">
+            Fine-tuning streaming video world models on their own rollouts against real-data
+            Fréchet statistics — sustaining coherent 4,000+ frame rollouts from 381-frame
+            training clips with <strong>no teacher</strong>, <strong>no online critic</strong>,
+            and <strong>no long videos</strong>.
+          </p>
+
+          <div class="authors" aria-label="Authors">
+            <span>Yian Zhao</span>
+            <span>Yu Yan</span>
+            <span>Hongcan Guo</span>
+            <span>Ruochong Zheng</span>
+            <span>Jian Zhang</span>
+            <span>Jie Chen</span>
+          </div>
+          <p class="affiliation">Peking University</p>
+
+          <div class="link-row">
+            <a class="button primary" href="assets/paper.pdf" target="_blank" rel="noopener">Paper</a>
+            <a class="button" href="https://github.com/zhao-yian/Frechet_Forcing" target="_blank" rel="noopener">Code</a>
+            <a class="button" href="https://huggingface.co/zhaoyian01/Frechet_Forcing" target="_blank" rel="noopener">Models</a>
+            <button class="button" type="button" data-copy-citation>Copy citation</button>
+            <a class="availability" href="https://zhao-yian.github.io/MiniWorld/" target="_blank" rel="noopener">Built on MiniWorld ↗</a>
+          </div>
+
+          <div class="hero-stats" aria-label="Key highlights">
+            <div>
+              <strong>4,000+</strong>
+              <span>Stable frames (&gt;10× training horizon)</span>
+            </div>
+            <div>
+              <strong>≤ 36h</strong>
+              <span>GPU-hours fine-tuning (225 steps)</span>
+            </div>
+            <div>
+              <strong>25× / 2.7×</strong>
+              <span>Final-bin FVD reduction (DROID / Sekai)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-demo reveal" data-delay="1">
+          <div class="demo-toolbar">
+            <span>Long-horizon 3×3 streaming rollouts</span>
+            <div class="segmented-control" role="group" aria-label="Choose hero demo">
+              <button class="active" type="button" data-hero-demo="droid_4k">DROID · 4,001f</button>
+              <button type="button" data-hero-demo="sekai_4k">Sekai · 4,001f</button>
+              <button type="button" data-hero-demo="droid_60s">DROID · 60s</button>
+              <button type="button" data-hero-demo="sekai_60s">Sekai · 60s</button>
+            </div>
+          </div>
+          <div class="hero-video-frame">
+            <video
+              id="hero-video"
+              autoplay
+              muted
+              loop
+              playsinline
+              controls
+              preload="metadata"
+              src="droid_demo/grid_ultra_4001f_set1.mp4"
+            ></video>
+          </div>
+          <div class="demo-caption">
+            <strong id="hero-video-title">Action-conditioned robot manipulation (DROID)</strong>
+            <span id="hero-video-meta">Nine 4,001-frame (~4.2 min) rollouts from a single real frame</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- OVERVIEW SECTION -->
+      <section class="overview section page-width" id="overview">
+        <div class="section-label reveal">Overview</div>
+        <div class="overview-content">
+          <h2 class="reveal">Long-horizon stability without a teacher, critic, or long videos.</h2>
+          <div class="overview-text reveal" data-delay="1">
+            <p>
+              Streaming video world models generate the future chunk by chunk, conditioned on
+              their own past and a stream of actions. When trained on short clips, they drift
+              once a rollout exceeds the training horizon as prediction errors re-enter the
+              context and compound — causing scenes on DROID to dissolve into saturated lattice
+              textures and camera rollouts on Sekai to darken and fade to black.
+            </p>
+            <p>
+              A common remedy is distribution matching distillation (DMD) on self-generated
+              rollouts. For action-conditioned world models, however, the teacher becomes a
+              bottleneck: an external video model is agnostic to the actions, whereas the
+              model's own pretrained network drifts in the same manner as the student.
+              Teacher-free per-sample objectives avoid a teacher, yet supervise only states
+              paired with recorded ground truth within short clips.
+            </p>
+            <p>
+              We observe that a long rollout need not match a teacher, provided it remains a
+              realistic continuation of its own scene that follows the commanded actions.
+              <strong>Fréchet Forcing</strong> fine-tunes a world model together with its
+              deployed multi-step sampler under three complementary constraints derived solely
+              from short real clips: <em>generative anchoring</em>, <em>context fidelity</em>,
+              and <em>reality matching</em>.
+            </p>
+            <p>
+              Fine-tuning <code>MiniWorld-1B</code> (pretrained on 253-frame clips) for at most
+              36 GPU-hours on 381-frame clips yields <code>MiniWorld-1B-FF</code>, whose
+              rollouts remain stable beyond 4,000 frames (&gt;10× the fine-tuning horizon) and
+              accurately follow robot and camera commands.
+            </p>
+          </div>
+        </div>
+
+        <figure class="paper-figure teaser-figure reveal">
+          <button type="button" data-expand-src="assets/fig_teaser.png" data-expand-alt="4,000-frame rollouts comparing MiniWorld-1B and MiniWorld-1B-FF" aria-label="Expand teaser figure">
+            <img
+              src="assets/fig_teaser.png"
+              alt="4,000-frame chunk-by-chunk rollouts comparing MiniWorld-1B and MiniWorld-1B-FF on DROID and Sekai"
+              loading="lazy"
+            />
+            <span>Click to expand</span>
+          </button>
+          <figcaption>
+            <strong>4,000-frame chunk-by-chunk rollouts from a single real frame.</strong>
+            Two DROID manipulation episodes (top four rows) and one Sekai exploration scene
+            (bottom two rows). Pretrained <code>MiniWorld-1B</code> (253-frame horizon) suffers
+            from spreading lattice artifacts on DROID and fades to black on Sekai within
+            1,000 frames. <code>MiniWorld-1B-FF</code>, fine-tuned with Fréchet Forcing on
+            381-frame clips, stays coherent through frame 4,000.
+          </figcaption>
+        </figure>
+      </section>
+
+      <!-- DEMOS SECTION -->
+      <section class="demos section" id="demos">
+        <div class="page-width">
+          <div class="section-heading reveal">
+            <div>
+              <div class="section-label">Qualitative results</div>
+              <h2>Long-horizon generated worlds</h2>
+            </div>
+            <p>
+              Explore 4,001-frame ultra-long rollouts and 60-second (961-frame) streaming
+              rollouts under robot manipulation commands (DROID) and camera trajectories
+              (Sekai). Switch between synchronized 3×3 grids and individual scene rollouts.
+            </p>
+          </div>
+
+          <div class="gallery-toolbar reveal">
+            <div class="toolbar-group">
+              <div class="filter-tabs" role="tablist" aria-label="Filter domain and horizon">
+                <button class="active" type="button" role="tab" data-filter="droid_4k">
+                  DROID · 4,001 frames
+                </button>
+                <button type="button" role="tab" data-filter="droid_60s">
+                  DROID · 60s (961f)
+                </button>
+                <button type="button" role="tab" data-filter="sekai_4k">
+                  Sekai · 4,001 frames
+                </button>
+                <button type="button" role="tab" data-filter="sekai_60s">
+                  Sekai · 60s (961f)
+                </button>
+              </div>
+            </div>
+
+            <div class="toolbar-actions">
+              <div class="view-mode-tabs" role="group" aria-label="View mode">
+                <button class="active" type="button" data-view-mode="clips">Individual rollouts</button>
+                <button type="button" data-view-mode="grids">3×3 Grid videos</button>
+              </div>
+              <button class="text-button" type="button" data-shuffle>Shuffle examples</button>
+            </div>
+          </div>
+
+          <!-- Individual Clips View -->
+          <div id="clips-container">
+            <div class="video-gallery" id="video-gallery" aria-live="polite"></div>
+            <div class="gallery-footer" id="gallery-footer">
+              <button class="button" type="button" data-load-more>Load more examples</button>
+              <span><span id="gallery-count">9</span> of <span id="gallery-total">18</span> shown · Hover to preview, click to inspect full rollout</span>
+            </div>
+          </div>
+
+          <!-- 3x3 Full Grid View -->
+          <div id="grids-container" class="grids-showcase" hidden>
+            <div class="grids-list" id="grids-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- METHOD SECTION -->
+      <section class="method section page-width" id="method">
+        <div class="section-heading reveal">
+          <div>
+            <div class="section-label">Method</div>
+            <h2>Fréchet Forcing</h2>
+          </div>
+          <p>
+            A long rollout remains effective when it acts as a faithful conditional generator,
+            preserves the identity of its initial scene, and produces realistic frames.
+            Fréchet Forcing enforces these three properties with unit-weighted constraints.
+          </p>
+        </div>
+
+        <div class="equation-banner reveal">
+          <div class="eq-formula">
+            <span class="eq-lhs">ℒ<sub>total</sub> =</span>
+            <span class="eq-term anc">
+              <strong>ℒ<sub>anc</sub></strong>
+              <small>Generative anchoring</small>
+            </span>
+            <span class="eq-plus">+</span>
+            <span class="eq-term ctx">
+              <strong>ℒ<sub>ctx</sub></strong>
+              <small>Context fidelity</small>
+            </span>
+            <span class="eq-plus">+</span>
+            <span class="eq-term real">
+              <strong>ℒ<sub>real</sub></strong>
+              <small>Reality matching</small>
+            </span>
+          </div>
+          <p class="eq-note">
+            All distributional terms use running moment estimates (EMA decay β = 0.99) and
+            self-normalised Fréchet distances <code>FD / sg(FD)</code>, enabling batch-size-one
+            training per GPU without storing past features.
+          </p>
+        </div>
+
+        <div class="method-grid reveal">
+          <!-- Card 1: Generative Anchoring -->
+          <article class="method-card">
+            <div class="method-card-header">
+              <span class="method-badge">01 · Regression on short window</span>
+              <h3>Generative Anchoring (ℒ<sub>anc</sub>)</h3>
+            </div>
+            <p>
+              Applies the flow-matching (FM) loss on <em>W</em> = 4 real chunks conditioned on a
+              self-generated history of <em>c</em> ∼ <em>U</em>[1, <em>N</em>] chunks re-noised
+              to <em>t<sub>a</sub></em> = 0.7 and denoised with the deployed staircase sampler.
+            </p>
+            <div class="method-equation">
+              <code>h<sub>c</sub> = [ sg S(G, x<sub>&lt;c-1</sub><sup>t<sub>a</sub></sup>, a),  x<sub>c-1</sub> ]</code>
+            </div>
+            <p class="method-highlight">
+              <strong>Ending on real data eliminates seam flicker.</strong> Replacing the final
+              history chunk with the clean real chunk <code>x<sub>c-1</sub></code> resolves the
+              spatial mismatch across the boundary, preventing the model from periodically
+              redrawing the scene every chunk.
+            </p>
+          </article>
+
+          <!-- Card 2: Context Fidelity -->
+          <article class="method-card">
+            <div class="method-card-header">
+              <span class="method-badge">02 · Clip-centred latent FD</span>
+              <h3>Context Fidelity (ℒ<sub>ctx</sub>)</h3>
+            </div>
+            <p>
+              During a free rollout of <em>N</em> = 40 chunks from a single real latent,
+              gradients flow through the final <em>K</em> = 8 chunks. Each latent is summarised
+              by per-channel spatial mean and std concatenated across consecutive latents
+              <code>ψ(z)</code>, then <strong>centred on the clip's own ground truth</strong>:
+            </p>
+            <div class="method-equation">
+              <code>h = ψ(z<sub>N-K:N</sub>) − mean(ψ(x<sub>N-K:N</sub>))</code>
+            </div>
+            <p class="method-highlight">
+              <strong>Preserving scene identity.</strong> Centring converts a marginal
+              population metric into a clip-conditional one — preventing rollouts from
+              collapsing toward a dataset-average appearance while scoring only the
+              gradient-carrying tail.
+            </p>
+          </article>
+
+          <!-- Card 3: Reality Matching -->
+          <article class="method-card">
+            <div class="method-card-header">
+              <span class="method-badge">03 · Perceptual frame FD</span>
+              <h3>Reality Matching (ℒ<sub>real</sub>)</h3>
+            </div>
+            <p>
+              Decodes the last <em>D</em> = 4 rollout chunks (plus one preceding warm-up chunk
+              whose frames are discarded) through the frozen causal VAE decoder and embeds
+              frames with the CLS token of a frozen <strong>DINOv2 ViT-B/14</strong>.
+            </p>
+            <div class="method-equation">
+              <code>ℒ<sub>real</sub> = FD<sub>EMA</sub>( φ(Dec(z)), ref<sub>real</sub> )</code>
+            </div>
+            <p class="method-highlight">
+              <strong>Ruling out degenerate textures.</strong> Matching high-level perceptual
+              moments against VAE reconstructions of real training frames penalises the dark,
+              washed-out, or fish-scale tiled artifacts that satisfy low-order latent moments.
+            </p>
+          </article>
+        </div>
+
+        <!-- Algorithm & Paradigm Comparison -->
+        <div class="method-bottom reveal">
+          <div class="code-panel">
+            <div class="panel-header">
+              <span>Algorithm 1 · One training step of Fréchet Forcing</span>
+              <span class="panel-tag">PyTorch-like pseudocode</span>
+            </div>
+            <pre><code><span class="c-comment"># G: streaming world model;  S: deployed streaming sampler</span>
+<span class="c-comment"># Dec: frozen VAE decoder;  phi: frozen DINOv2;  psi: latent moments</span>
+x, a = <span class="c-fn">sample_clip</span>()                    <span class="c-comment"># 381-frame real latents &amp; actions</span>
+
+<span class="c-comment"># 1. Generative anchoring: FM after a self-denoised history</span>
+c = randint(1, N)
+hist = <span class="c-fn">S</span>(G, <span class="c-fn">renoise</span>(x[:c], t=t_a), a).<span class="c-fn">detach</span>()
+hist[-1] = x[c-1]                       <span class="c-comment"># history ends on clean real chunk</span>
+L_anc = <span class="c-fn">flow_matching</span>(G, x[c:c+W], hist, a)
+
+<span class="c-comment"># 2. Free rollout from one real latent; last K chunks carry gradients</span>
+z = <span class="c-fn">S</span>(G, x[0], a)[-K:]
+x_z = x[N-K:N]                          <span class="c-comment"># GT over the same temporal span</span>
+
+<span class="c-comment"># 3. Context fidelity &amp; Reality matching via self-normalised EMA FD</span>
+L_ctx  = <span class="c-fn">FD_ema</span>(<span class="c-fn">psi</span>(z) - <span class="c-fn">psi</span>(x_z).mean(0), ref_ctx, ema_ctx)
+L_real = <span class="c-fn">FD_ema</span>(<span class="c-fn">phi</span>(<span class="c-fn">Dec</span>(z)), ref_real, ema_real)
+
+(L_anc + L_ctx + L_real).<span class="c-fn">backward</span>()
+optimizer.<span class="c-fn">step</span>()</code></pre>
+          </div>
+
+          <div class="comparison-panel">
+            <div class="panel-header">
+              <span>Comparison of training signals on self-generated rollouts</span>
+              <span class="panel-tag">Table 1</span>
+            </div>
+            <div class="table-scroll">
+              <table class="comparison-table">
+                <thead>
+                  <tr>
+                    <th>Property</th>
+                    <th>DMD / Long-DMD</th>
+                    <th>RMD</th>
+                    <th>Self-history</th>
+                    <th>Reversal</th>
+                    <th class="col-ours">Fréchet Forcing</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Supervision target</td>
+                    <td>Teacher score</td>
+                    <td>Per-chunk teacher</td>
+                    <td>GT continuation</td>
+                    <td>GT start</td>
+                    <td class="col-ours"><strong>Real-data moments</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Teacher-free</td>
+                    <td class="mark-no">✗</td>
+                    <td class="mark-no">✗</td>
+                    <td class="mark-yes">✓</td>
+                    <td class="mark-yes">✓</td>
+                    <td class="col-ours mark-yes">✓</td>
+                  </tr>
+                  <tr>
+                    <td>Online critic-free</td>
+                    <td class="mark-no">✗</td>
+                    <td class="mark-no">✗</td>
+                    <td class="mark-yes">✓</td>
+                    <td class="mark-yes">✓</td>
+                    <td class="col-ours mark-yes">✓</td>
+                  </tr>
+                  <tr>
+                    <td>Gradient into free rollout</td>
+                    <td class="mark-yes">✓</td>
+                    <td class="mark-yes">✓</td>
+                    <td class="mark-no">✗</td>
+                    <td class="mark-no">✗</td>
+                    <td class="col-ours mark-yes">✓</td>
+                  </tr>
+                  <tr>
+                    <td>Original multi-step sampler kept</td>
+                    <td class="mark-no">✗</td>
+                    <td class="mark-no">✗</td>
+                    <td class="mark-yes">✓</td>
+                    <td class="mark-yes">✓</td>
+                    <td class="col-ours mark-yes">✓</td>
+                  </tr>
+                  <tr>
+                    <td>Extra requirement</td>
+                    <td>Pretrained teacher</td>
+                    <td>Chunk teacher</td>
+                    <td>—</td>
+                    <td>Reversible dynamics</td>
+                    <td class="col-ours"><strong>Reference stats</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESULTS SECTION -->
+      <section class="results section" id="results">
+        <div class="page-width">
+          <div class="section-heading reveal">
+            <div>
+              <div class="section-label">Experiments</div>
+              <h2>Quantitative evaluation over 4,000 frames</h2>
+            </div>
+            <p>
+              Evaluated on 32 held-out trajectories per domain up to frame 4,001 across six
+              horizon bins, comparing pretrained <code>MiniWorld-1B</code>, an
+              <code>FM-only</code> self-history baseline, and <code>MiniWorld-1B-FF</code>.
+            </p>
+          </div>
+
+          <figure class="paper-figure reveal" style="margin-bottom: 36px;">
+            <button type="button" data-expand-src="assets/fig_horizon.png" data-expand-alt="Long-horizon metrics across 4,000 frames on DROID and Sekai" aria-label="Expand horizon plot">
+              <img
+                src="assets/fig_horizon.png"
+                alt="Quantitative metrics over 4,000 generated frames on DROID and Sekai"
+                loading="lazy"
+              />
+              <span>Click to expand</span>
+            </button>
+            <figcaption>
+              <strong>Realism and stability across 4,001 frames (Figure 2).</strong>
+              Top: DROID robot manipulation. Bottom: Sekai camera-controlled exploration.
+              While <code>MiniWorld-1B</code> and <code>FM-only</code> degrade sharply right
+              after the 253-frame pretraining horizon, <code>MiniWorld-1B-FF</code> keeps
+              CLIP-FD, FVD, brightness, and chunk-boundary flicker flat across the entire
+              4,000-frame rollout. The shaded grey band marks the 381-frame training clip length.
+            </figcaption>
+          </figure>
+
+          <!-- Interactive Data Tables Viewer -->
+          <div class="result-viewer reveal">
+            <div class="result-viewer-header">
+              <div class="result-tabs" role="tablist" aria-label="Choose quantitative table">
+                <button class="active" type="button" role="tab" data-result-tab="droid">
+                  DROID · Realism (Table 2)
+                </button>
+                <button type="button" role="tab" data-result-tab="sekai">
+                  Sekai · Realism (Table 2)
+                </button>
+                <button type="button" role="tab" data-result-tab="control">
+                  Action Following (Table 3)
+                </button>
+                <button type="button" role="tab" data-result-tab="ablation">
+                  Ablations &amp; Seam (Tables 4 &amp; 5)
+                </button>
+              </div>
+            </div>
+
+            <!-- Tab 1: DROID Realism -->
+            <div class="result-pane active" data-pane="droid">
+              <div class="pane-intro">
+                <div>
+                  <h3>Realism over 4,001 frames on DROID</h3>
+                  <p>
+                    Across all six horizon bins, <code>MiniWorld-1B-FF</code> keeps CLIP-FD
+                    within 30–44 and FVD within 39–81, achieving <strong>10× lower CLIP-FD</strong>
+                    and <strong>25× lower FVD</strong> than <code>MiniWorld-1B</code> in frames
+                    2,997–4,001. Manual inspection of 96 rollouts confirms 98% are artifact-free
+                    at frame 1,500 and 79% at frame 4,000 (vs. 0% for base).
+                  </p>
+                </div>
+              </div>
+              <div class="table-scroll">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Metric / Model</th>
+                      <th>1–253</th>
+                      <th>253–509</th>
+                      <th>509–1k</th>
+                      <th>1k–1.8k</th>
+                      <th>1.8k–3k</th>
+                      <th>3k–4k</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="group-row"><td colspan="7">CLIP-FD ↓ (lower is better)</td></tr>
+                    <tr class="gt-row"><td><em>GT (floor at same sample count)</em></td><td><em>6</em></td><td><em>10</em></td><td><em>5</em></td><td><em>5</em></td><td><em>5</em></td><td><em>5</em></td></tr>
+                    <tr><td>MiniWorld-1B (pretrained)</td><td>38</td><td>61</td><td>105</td><td>223</td><td>348</td><td>431</td></tr>
+                    <tr><td>FM-only (self-history baseline)</td><td>38</td><td>66</td><td>117</td><td>217</td><td>320</td><td>401</td></tr>
+                    <tr class="ours-row"><td><strong>MiniWorld-1B-FF (Ours)</strong></td><td><strong>30</strong></td><td><strong>42</strong></td><td><strong>38</strong></td><td><strong>39</strong></td><td><strong>40</strong></td><td><strong>44</strong></td></tr>
+
+                    <tr class="group-row"><td colspan="7">FVD ↓ (I3D on 16-frame windows)</td></tr>
+                    <tr><td>MiniWorld-1B (pretrained)</td><td>45</td><td>80</td><td>177</td><td>733</td><td>2,000</td><td>2,058</td></tr>
+                    <tr><td>FM-only (self-history baseline)</td><td>44</td><td>89</td><td>194</td><td>546</td><td>1,420</td><td>1,873</td></tr>
+                    <tr class="ours-row"><td><strong>MiniWorld-1B-FF (Ours)</strong></td><td><strong>39</strong></td><td><strong>66</strong></td><td><strong>57</strong></td><td><strong>62</strong></td><td><strong>70</strong></td><td><strong>81</strong></td></tr>
+
+                    <tr class="group-row"><td colspan="7">Brightness (ratio to GT; 1.00 is ideal)</td></tr>
+                    <tr><td>MiniWorld-1B (pretrained)</td><td><strong>1.00</strong></td><td><strong>1.00</strong></td><td><strong>1.00</strong></td><td>1.02</td><td>1.03</td><td><strong>1.00</strong></td></tr>
+                    <tr><td>FM-only (self-history baseline)</td><td>0.99</td><td>0.98</td><td>0.96</td><td>0.94</td><td>0.94</td><td>0.94</td></tr>
+                    <tr class="ours-row"><td><strong>MiniWorld-1B-FF (Ours)</strong></td><td><strong>1.00</strong></td><td><strong>1.00</strong></td><td>0.99</td><td><strong>0.99</strong></td><td><strong>0.98</strong></td><td>0.98</td></tr>
+
+                    <tr class="group-row"><td colspan="7">Chunk-boundary flicker (1.0 = no periodic redraw)</td></tr>
+                    <tr class="gt-row"><td><em>GT reference</em></td><td><em>1.13</em></td><td><em>0.98</em></td><td><em>1.04</em></td><td><em>1.03</em></td><td><em>1.03</em></td><td><em>1.04</em></td></tr>
+                    <tr><td>MiniWorld-1B (pretrained)</td><td>1.08</td><td>1.12</td><td>1.12</td><td>1.22</td><td>1.35</td><td>1.46</td></tr>
+                    <tr><td>FM-only (self-history baseline)</td><td>1.06</td><td><strong>1.09</strong></td><td><strong>1.07</strong></td><td>1.13</td><td>1.25</td><td>1.37</td></tr>
+                    <tr class="ours-row"><td><strong>MiniWorld-1B-FF (Ours)</strong></td><td><strong>1.09</strong></td><td>1.13</td><td>1.10</td><td><strong>1.11</strong></td><td><strong>1.11</strong></td><td><strong>1.11</strong></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Tab 2: Sekai Realism -->
+            <div class="result-pane" data-pane="sekai" hidden>
+              <div class="pane-intro">
+                <div>
+                  <h3>Realism over 4,001 frames on Sekai</h3>
+                  <p>
+                    On Sekai camera-controlled exploration, pretrained <code>MiniWorld-1B</code>
+                    rapidly darkens (brightness drops to 0.40) and dissolves into noise.
+                    <code>MiniWorld-1B-FF</code> maintains stable exposure (0.92–1.07 of GT),
+                    eliminates chunk-boundary flicker (1.03–1.13), and reduces final-bin CLIP-FD
+                    and FVD by <strong>2.7×</strong>.
+                  </p>
+                </div>
+              </div>
+              <div class="table-scroll">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Metric / Model</th>
+                      <th>1–253</th>
+                      <th>253–509</th>
+                      <th>509–1k</th>
+                      <th>1k–1.8k</th>
+                      <th>1.8k–3k</th>
+                      <th>3k–4k</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="group-row"><td colspan="7">CLIP-FD ↓ (lower is better)</td></tr>
+                    <tr class="gt-row"><td><em>GT (recorded up to frame 1,789)</em></td><td><em>128</em></td><td><em>131</em></td><td><em>122</em></td><td><em>110</em></td><td><em>—</em></td><td><em>—</em></td></tr>
+                    <tr><td>MiniWorld-1B (pretrained)</td><td>292</td><td>447</td><td>490</td><td>524</td><td>554</td><td>609</td></tr>
+                    <tr><td>FM-only (self-history baseline)</td><td>238</td><td>371</td><td>419</td><td>476</td><td>505</td><td>564</td></tr>
+                    <tr class="ours-row"><td><strong>MiniWorld-1B-FF (Ours)</strong></td><td><strong>148</strong></td><td><strong>181</strong></td><td><strong>197</strong></td><td><strong>213</strong></td><td><strong>209</strong></td><td><strong>226</strong></td></tr>
+
+                    <tr class="group-row"><td colspan="7">FVD ↓ (I3D on 16-frame windows)</td></tr>
+                    <tr><td>MiniWorld-1B (pretrained)</td><td>400</td><td>1,109</td><td>1,213</td><td>1,283</td><td>1,217</td><td>1,193</td></tr>
+                    <tr><td>FM-only (self-history baseline)</td><td>308</td><td>808</td><td>877</td><td>1,019</td><td>1,066</td><td>1,181</td></tr>
+                    <tr class="ours-row"><td><strong>MiniWorld-1B-FF (Ours)</strong></td><td><strong>186</strong></td><td><strong>249</strong></td><td><strong>316</strong></td><td><strong>358</strong></td><td><strong>372</strong></td><td><strong>441</strong></td></tr>
+
+                    <tr class="group-row"><td colspan="7">Brightness (ratio to GT; 1.00 is ideal)</td></tr>
+                    <tr><td>MiniWorld-1B (pretrained)</td><td>0.89</td><td>0.77</td><td>0.68</td><td>0.61</td><td>0.50</td><td>0.40</td></tr>
+                    <tr><td>FM-only (self-history baseline)</td><td>0.90</td><td>0.79</td><td>0.80</td><td>0.79</td><td>0.70</td><td>0.59</td></tr>
+                    <tr class="ours-row"><td><strong>MiniWorld-1B-FF (Ours)</strong></td><td><strong>1.01</strong></td><td><strong>1.02</strong></td><td><strong>1.02</strong></td><td><strong>1.07</strong></td><td><strong>1.01</strong></td><td><strong>0.92</strong></td></tr>
+
+                    <tr class="group-row"><td colspan="7">Chunk-boundary flicker (1.0 = no periodic redraw)</td></tr>
+                    <tr class="gt-row"><td><em>GT reference</em></td><td><em>1.01</em></td><td><em>1.01</em></td><td><em>1.00</em></td><td><em>1.02</em></td><td><em>—</em></td><td><em>—</em></td></tr>
+                    <tr><td>MiniWorld-1B (pretrained)</td><td>1.20</td><td>1.43</td><td>1.54</td><td>1.44</td><td>1.53</td><td>1.58</td></tr>
+                    <tr><td>FM-only (self-history baseline)</td><td>1.35</td><td>1.44</td><td>1.56</td><td>1.63</td><td>1.76</td><td>1.96</td></tr>
+                    <tr class="ours-row"><td><strong>MiniWorld-1B-FF (Ours)</strong></td><td><strong>1.03</strong></td><td><strong>1.03</strong></td><td><strong>1.04</strong></td><td><strong>1.09</strong></td><td><strong>1.10</strong></td><td><strong>1.13</strong></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Tab 3: Action Following -->
+            <div class="result-pane" data-pane="control" hidden>
+              <div class="pane-intro">
+                <div>
+                  <h3>Action controllability over 4,000 frames (Table 3)</h3>
+                  <p>
+                    Gains in visual realism preserve and dramatically extend action
+                    controllability. On DROID forward-backward replay, PSNR stays above
+                    <strong>21.5 dB</strong> through frame 4,000 (vs. 8.9 dB for base). On Sekai,
+                    when counterfactually forked into left/right turns at frame 3,581,
+                    <strong>97%</strong> of branches turn in the commanded direction.
+                  </p>
+                </div>
+              </div>
+              <div class="table-scroll">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th rowspan="2">Model</th>
+                      <th colspan="6">DROID: PSNR to Replay GT (dB) ↑</th>
+                      <th>Sekai</th>
+                      <th colspan="2">Turn @ Frame 893</th>
+                      <th colspan="2">Turn @ Frame 3,581</th>
+                    </tr>
+                    <tr>
+                      <th>1–253</th>
+                      <th>253–509</th>
+                      <th>509–1k</th>
+                      <th>1k–1.8k</th>
+                      <th>1.8k–3k</th>
+                      <th>3k–4k</th>
+                      <th>Yaw <em>r</em> ↑</th>
+                      <th>Dir. (%)</th>
+                      <th>Mag. (%)</th>
+                      <th>Dir. (%)</th>
+                      <th>Mag. (%)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>MiniWorld-1B (pretrained)</td>
+                      <td><strong>25.0</strong></td>
+                      <td>21.8</td>
+                      <td>19.8</td>
+                      <td>15.7</td>
+                      <td>11.3</td>
+                      <td>8.9</td>
+                      <td>0.23</td>
+                      <td>59%</td>
+                      <td>19%</td>
+                      <td>47%</td>
+                      <td>−0.2%</td>
+                    </tr>
+                    <tr>
+                      <td>FM-only (self-history)</td>
+                      <td>24.1</td>
+                      <td>21.4</td>
+                      <td>19.6</td>
+                      <td>16.3</td>
+                      <td>12.9</td>
+                      <td>10.4</td>
+                      <td>−0.13</td>
+                      <td>47%</td>
+                      <td>2%</td>
+                      <td>38%</td>
+                      <td>−2.8%</td>
+                    </tr>
+                    <tr class="ours-row">
+                      <td><strong>MiniWorld-1B-FF (Ours)</strong></td>
+                      <td>24.4</td>
+                      <td><strong>22.1</strong></td>
+                      <td><strong>22.4</strong></td>
+                      <td><strong>22.1</strong></td>
+                      <td><strong>21.8</strong></td>
+                      <td><strong>21.5</strong></td>
+                      <td><strong>0.69</strong></td>
+                      <td><strong>100%</strong></td>
+                      <td><strong>60%</strong></td>
+                      <td><strong>97%</strong></td>
+                      <td><strong>49%</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Tab 4: Ablations -->
+            <div class="result-pane" data-pane="ablation" hidden>
+              <div class="pane-intro">
+                <div>
+                  <h3>Component ablations &amp; anchoring seam analysis (Tables 4 &amp; 5)</h3>
+                  <p>
+                    Evaluated on the 1,789-frame Sekai recorded-trajectory protocol (frames
+                    1,021–1,789). Removing any single constraint reintroduces its corresponding
+                    failure mode: dropping reality matching causes blurry degenerate frames
+                    (CLIP-FD 395), dropping context fidelity causes darkening (0.74), and
+                    omitting self-generated history drops brightness to 0.44.
+                  </p>
+                </div>
+              </div>
+              <div class="table-scroll">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Configuration (Sekai frames 1,021–1,789)</th>
+                      <th>CLIP-FD ↓</th>
+                      <th>FVD ↓</th>
+                      <th>Sharpness (1=GT)</th>
+                      <th>Brightness (1=GT)</th>
+                      <th>Flicker (1.02=GT)</th>
+                      <th>Yaw <em>r</em> ↑</th>
+                      <th>Turn Dir. ↑</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="ours-row">
+                      <td><strong>MiniWorld-1B-FF (Full recipe, history ends on real chunk)</strong></td>
+                      <td><strong>226</strong></td>
+                      <td>518</td>
+                      <td>1.33</td>
+                      <td><strong>1.03</strong></td>
+                      <td>1.13</td>
+                      <td><strong>0.69</strong></td>
+                      <td><strong>1.00</strong></td>
+                    </tr>
+                    <tr>
+                      <td>Context fidelity computed in pixel space</td>
+                      <td>230</td>
+                      <td><strong>336</strong></td>
+                      <td>0.70</td>
+                      <td>0.79</td>
+                      <td><strong>1.03</strong></td>
+                      <td>0.64</td>
+                      <td>0.97</td>
+                    </tr>
+                    <tr class="group-row"><td colspan="8">Ablations (with anchoring history re-rendered to the end)</td></tr>
+                    <tr>
+                      <td>History re-rendered to end (<em>t<sub>a</sub></em> = 0.7)</td>
+                      <td>248</td>
+                      <td>463</td>
+                      <td>1.42</td>
+                      <td>0.94</td>
+                      <td>1.35</td>
+                      <td>0.57</td>
+                      <td>0.94</td>
+                    </tr>
+                    <tr>
+                      <td> − Context fidelity (ℒ<sub>ctx</sub>)</td>
+                      <td>264</td>
+                      <td>540</td>
+                      <td>0.68</td>
+                      <td>0.74</td>
+                      <td>1.29</td>
+                      <td>0.59</td>
+                      <td>0.91</td>
+                    </tr>
+                    <tr>
+                      <td> − Self-generated history (clean GT history in FM)</td>
+                      <td>253</td>
+                      <td>564</td>
+                      <td>0.77</td>
+                      <td>0.44</td>
+                      <td>1.13</td>
+                      <td>0.63</td>
+                      <td>0.91</td>
+                    </tr>
+                    <tr>
+                      <td> − Reality matching (ℒ<sub>real</sub>)</td>
+                      <td>395</td>
+                      <td>745</td>
+                      <td>0.58</td>
+                      <td>0.84</td>
+                      <td>1.39</td>
+                      <td>0.23</td>
+                      <td>0.75</td>
+                    </tr>
+                    <tr>
+                      <td>FM-only baseline</td>
+                      <td>479</td>
+                      <td>1,002</td>
+                      <td>0.87</td>
+                      <td>0.73</td>
+                      <td>1.71</td>
+                      <td>−0.13</td>
+                      <td>0.47</td>
+                    </tr>
+                    <tr>
+                      <td>MiniWorld-1B (pretrained)</td>
+                      <td>504</td>
+                      <td>1,154</td>
+                      <td>2.22</td>
+                      <td>0.58</td>
+                      <td>1.45</td>
+                      <td>0.23</td>
+                      <td>0.59</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ANALYSIS / DYNAMICS SECTION -->
+      <section class="analysis section page-width" id="analysis">
+        <div class="section-heading reveal">
+          <div>
+            <div class="section-label">Training dynamics</div>
+            <h2>Why naive distribution matching fails</h2>
+          </div>
+          <p>
+            Diagnostic probes over training steps reveal three distinct distributional failure
+            modes on free rollouts — and show how each design choice in Fréchet Forcing
+            prevents them.
+          </p>
+        </div>
+
+        <figure class="paper-figure reveal">
+          <button type="button" data-expand-src="assets/fig_dynamics.png" data-expand-alt="Training dynamics of distribution matching on free rollouts" aria-label="Expand training dynamics figure">
+            <img
+              src="assets/fig_dynamics.png"
+              alt="Training dynamics showing context dependence, gradient-statistic alignment, and held-out perceptual CLIP-FD"
+              loading="lazy"
+            />
+            <span>Click to expand</span>
+          </button>
+          <figcaption>
+            <strong>Diagnostic probes across training steps (Figure 3).</strong>
+            <strong>(a) Context dependence:</strong> Regression slope of each rollout's mean
+            latent feature on its own ground truth in frames 765–933 (1 = full preservation).
+            <strong>(b) Gradient–statistic alignment:</strong> Cosine similarity between the
+            mean-matching correction and the true direction needed by the gradient-carrying
+            tail chunks.
+            <strong>(c) Held-out perceptual judge:</strong> Held-out CLIP-FD in frames
+            1,021–1,789 vs. training latent FD (dotted).
+          </figcaption>
+        </figure>
+
+        <div class="method-notes analysis-notes reveal">
+          <p>
+            <strong>1. Context decoupling.</strong>
+            Matching an unconditional <em>marginal</em> FD allows rollouts to ignore their
+            initial frame and collapse toward a dataset-average reddish wash (slope drops from
+            0.92 to 0.50 in 50 steps). <em>Clip centring</em> fixes this.
+          </p>
+          <p>
+            <strong>2. Gradient–statistic misalignment.</strong>
+            Pooling statistics over all <em>N</em> chunks while truncating gradients to the last
+            <em>K</em> forces tail chunks to overshoot to compensate for the detached prefix
+            (alignment cosine decays to 0.39). <em>Scoring only the graded tail</em> resolves it.
+          </p>
+          <p>
+            <strong>3. Feature-space exploitation.</strong>
+            Optimising low-order latent moments alone drives training FD down while held-out
+            CLIP-FD rises, producing dark or fish-scale tiled frames. Adding <em>DINOv2 reality
+            matching</em> closes this loophole.
+          </p>
+          <p>
+            <strong>4. Chunk-boundary seam redraw.</strong>
+            Re-rendering the anchoring history all the way to the seam teaches the model to
+            redraw the scene every 8 frames (flicker 1.31). <em>Ending the history on one clean
+            real chunk</em> lowers flicker to 1.07 (matching GT).
+          </p>
+        </div>
+      </section>
+
+      <!-- CITATION SECTION -->
+      <section class="citation section page-width">
+        <div class="citation-copy">
+          <div>
+            <div class="section-label">Citation</div>
+            <h2>Cite Fréchet Forcing</h2>
+          </div>
+          <button class="button" type="button" data-copy-citation>Copy BibTeX</button>
+        </div>
+        <pre><code id="bibtex">@article{zhao2026frechetforcing,
+  title   = {Fr{\'e}chet Forcing: Training Long-Horizon Streaming World Models from Short Clips},
+  author  = {Zhao, Yian and Yan, Yu and Guo, Hongcan and Zheng, Ruochong and Zhang, Jian and Chen, Jie},
+  journal = {arXiv preprint},
+  year    = {2026}
+}</code></pre>
+      </section>
+    </main>
+
+    <footer class="page-width">
+      <div>
+        <a class="wordmark" href="#top"><span class="wordmark-mark"></span>Fréchet Forcing</a>
+        <p>Training long-horizon streaming video world models from short clips.</p>
+      </div>
+      <div class="footer-links">
+        <a href="assets/paper.pdf" target="_blank" rel="noopener">Paper</a>
+        <a href="https://github.com/zhao-yian/Frechet_Forcing" target="_blank" rel="noopener">Code</a>
+        <a href="https://huggingface.co/zhaoyian01/Frechet_Forcing" target="_blank" rel="noopener">Models</a>
+        <a href="https://zhao-yian.github.io/MiniWorld/" target="_blank" rel="noopener">MiniWorld</a>
+        <a href="#top">Back to top ↑</a>
+      </div>
+    </footer>
+
+    <!-- Video Modal -->
+    <dialog class="media-modal" id="media-modal">
+      <button class="modal-close" type="button" aria-label="Close viewer">×</button>
+      <button class="modal-nav previous" type="button" aria-label="Previous video">←</button>
+      <video controls autoplay muted loop playsinline></video>
+      <div class="modal-meta">
+        <span id="modal-subtitle"></span>
+        <strong id="modal-title"></strong>
+      </div>
+      <button class="modal-nav next" type="button" aria-label="Next video">→</button>
+    </dialog>
+
+    <!-- Figure Modal -->
+    <dialog class="figure-modal" id="figure-modal">
+      <button class="modal-close" type="button" aria-label="Close figure">×</button>
+      <img
+        id="figure-modal-img"
+        src="assets/fig_teaser.png"
+        alt="Expanded paper figure"
+      />
+    </dialog>
+
+    <div class="toast" role="status" aria-live="polite">Citation copied</div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
